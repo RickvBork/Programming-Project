@@ -29,9 +29,8 @@ technical and most difficult to follow sport on earth. Currently good visualizat
  ## Prerequisites
  
 1. Ergast API
-* For data from 1996 onwards
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* For data from 1996 onwards
 2. D3
-* For the visualizations
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* For the visualizations
 3. pattern
-* For optional scraping
-1. Data source1. Test
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* For optional scraping
