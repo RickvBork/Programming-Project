@@ -24,14 +24,21 @@ technical and most difficult to follow sport on earth. Currently good visualizat
 4. Percentage pie chart of constructors winning a race
 
 **Extra's**
- All the other features plus data from 1950-2017 (requires scraping several sites).
+ All the other features plus data from 1950-2017 (requires scraping several sites for single fastest laps).
+ Workaround is averaging laptimes, over a GP.
  
  ## Prerequisites
  
+**Data Sources and External COmponents**
 1. Ergast API
 * For data from 1996 onwards
-  1. Test
+* Workaround for all data (1950-2017) is using average laptimes
 2. D3
 * For the visualizations
 3. pattern
-* For optional scraping
+* For optional scraping (sites to be added)
+
+**Hardest Parts**
+* Scraping for additional data.
+* Using new API
+
