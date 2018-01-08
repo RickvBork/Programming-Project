@@ -30,6 +30,7 @@ Key are the lap times and constructor domination, as it is rumored that rule cha
 4. Percentage pie chart of constructors winning a race
 5. The slider and checkbox
 6. All interactions between the MVP visualizations
+7. Map interaction for selecting a circuit
 
 **Extra's**\
  All the other features plus data from 1950-2017 (requires scraping several sites for single fastest laps).
