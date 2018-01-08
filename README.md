@@ -7,6 +7,10 @@ technical and most difficult to follow sport on earth. Currently good visualizat
 
 ## Solution
 
+A visualization showing effects of the biggest rule changes, formula changes, in F1 history.
+
+Key are the lap times and constructor domination, as it is rumored that rule changes break large streaks of domination by a single team.
+
 **Main Features**
 1. A slider for selecting a host country of an F1 venue
 2. A dropdown for selecting an F1 circtuit included in the calender for the selected country
