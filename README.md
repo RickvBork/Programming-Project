@@ -22,17 +22,20 @@ A constructor is the team building, preparing and running car(s) to participate 
 2. map
 3. Fastest laps chart per track
 4. Percentage pie chart of constructors winning a race
+5. The two data selection options
 
 **Extra's**\
  All the other features plus data from 1950-2017 (requires scraping several sites for single fastest laps).
  Workaround is averaging laptimes, over a GP.
  
  ## Prerequisites
- 
-**Data Sources and External COmponents**
+
+**Data Sources and External Components**
 1. Ergast API
-* For data from 1996 onwards
+* For single fastest lap data from 1996 onwards
 * Workaround for all data (1950-2017) is using average laptimes
+* http://ergast.com/api/f1/results/1 query for constructor, average lap times, circuit and year
+* http://ergast.com/api/f1/circuits/albert_park/results/1 query for all previous data per circuit ID
 2. D3
 * For the visualizations
 3. pattern
