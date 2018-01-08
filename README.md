@@ -12,21 +12,24 @@ A visualization showing effects of the biggest rule changes, formula changes, in
 Key are the lap times and constructor domination, as it is rumored that rule changes break large streaks of domination by a single team.
 
 **Main Features**
-1. A slider for selecting a host country of an F1 venue
-2. A dropdown for selecting an F1 circtuit included in the calender for the selected country
+1. A slider for selecting a year updating the map showing all the circuits for that year
+2. A checkbox for showing all circuits on the map
 3. A map showing the location of the selected track
-4. A line graph showing the fastest laps per year of the selected track
-5. A barchart showing the spread of the fastest laptimes per driver
-6. A piechart showing win percentages for constructors that have won a race that year
-A constructor is the team building, preparing and running car(s) to participate in F1. E.g. Ferrari, Red Bull etc.
-7. A piechart showing win percentages for drivers that have won a race that year
+* CLicking on the map selects a circuit
+4. A line graph showing the fastest laps per year of the selected circuit
+* Hovering the mouse over the line graph selects different years
+5. A barchart showing the spread of the fastest laptimes per driver for the selected year
+6. A piechart showing win percentages for constructors that have won a race in the selected year
+* A constructor is the team building, preparing and running car(s) to participate in F1. E.g. Ferrari, Red Bull etc.
+7. A piechart showing win percentages for drivers that have won a race in the selected year year
 
-**Minimal Viable Product**
+**Minimal Viable Product (MVP)**
 1. Data from 1996-2017
 2. map
 3. Fastest laps chart per track
 4. Percentage pie chart of constructors winning a race
-5. The two data selection options
+5. The slider and checkbox
+6. All interactions between the MVP visualizations
 
 **Extra's**\
  All the other features plus data from 1950-2017 (requires scraping several sites for single fastest laps).
