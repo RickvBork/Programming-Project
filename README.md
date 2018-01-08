@@ -14,6 +14,7 @@ technical and most difficult to follow sport on earth. Currently good visualizat
 4. A line graph showing the fastest laps per year of the selected track
 5. A barchart showing the spread of the fastest laptimes per driver
 6. A piechart showing win percentages for constructors that have won a race that year
+..* A constructor is the team building, preparing and running car(s) to participate in F1. E.g. Ferrari, Red Bull etc.
 7. A piechart showing win percentages for drivers that have won a race that year
 
 **Minimal Viable Product**
@@ -21,3 +22,12 @@ technical and most difficult to follow sport on earth. Currently good visualizat
 2. map
 3. Fastest laps chart per track
 4. Percentage pie chart of constructors winning a race
+
+**Extra's**
+ All the other features plus data from 1950-2017 (requires scraping several sites).
+ 
+ ## Prerequisites
+ 
+ 1. Ergast API
+ 2. D3
+ 3. 
