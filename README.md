@@ -32,8 +32,7 @@ technical and most difficult to follow sport on earth. Currently good visualizat
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 * For data from 1996 onwards
 2. D3\
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-* For the visualizations
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * For the visualizations
 3. pattern\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 * For optional scraping
