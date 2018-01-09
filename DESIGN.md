@@ -16,5 +16,5 @@ For this project, multiple data sources can be used, depending if the MVP is cho
   * Can be scraped for single fastest laps for a GP in a country. Not circuit specific, thus limited usability.
 * *F1 Database site(s)*
   * URL = http://www.f1db.de/database/season/xxxx/yy/index.html (yy is a two digit number specifying the round for a given year)
-  * Can be scraped per year per round for all relevant data (Winning Constructor, Driver, Fastest Lap, Pole 'Q3' Time etc.)
-  * Difficulty might be linking to Ergast API due to differing names for circuits etc. However the following request: **http://ergast.com/api/f1/xxxx/yy.json** includes lat, long and circuit ID for building a dict coupling the two naming systems if required.
+  * Can be scraped per year per round for all relevant data (Winning Constructor, Driver, Fastest Lap, Pole 'Q3' Time etc.) ***Except Location***
+  * Difficulty might be linking to Ergast API due to differing names for circuits etc. However the following request: http://ergast.com/api/f1/xxxx/yy.json includes lat, long and circuit ID for building a dict coupling the two naming systems if required.
