@@ -40,5 +40,5 @@ See JSON_example for possible layout.
 ## Component description
 
 1. Use Python to:
-..1. Find all circuit IDs http://ergast.com/api/f1/circuits.json
-..* Use this to start building a dict with the structure found in JSON.example
+  1. Find all circuit IDs http://ergast.com/api/f1/circuits.json
+  * Use this to start building a dict with the structure found in JSON.example
