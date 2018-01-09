@@ -1,9 +1,13 @@
+# Author information:
+
+* Name:		Rick van Bork
+* Std. nr.	11990503
+
+https://rickvbork.github.io/Programming-Project/
+
 # Problem statement
 
-The FIA, the governing body of many automitive sports, have prediodically tried to decrease the speed of the cars from 1994 onwards. However, 
-Formula 1 (F1) teams continue to find clever solutions to keep laptimes low to maintain a competitive edge. F1 is currently enjoying an 
-injection of new fans after a successfull Social Media strategy. These new fans might benefit from visualizations of what perhaps is the most 
-technical and most difficult to follow sport on earth. Currently good visualizations are lacking on the F1 site, this creates a gap to be filled.
+The FIA, the governing body of many automitive sports, have tried to decrease the speed of the cars, mainly from 1994 onwards. However, Formula 1 teams continue to find clever solutions to keep laptimes low to maintain a competitive edge. F1 is currently enjoying an injection of new fans after a Social Media campaign. New fans might benefit from visualizations of one of the most technical sports on earth. Currently, good visualizations are lacking on the F1 site, this creates a gap to be filled.
 
 ## Solution
 
@@ -12,9 +16,9 @@ A visualization showing effects of the biggest rule changes, formula changes, in
 Key are the lap times and constructor domination, as it is rumored that rule changes break large streaks of domination by a single team.
 
 **Main Features**
-1. A slider for selecting a year updating the map showing all the circuits for that year
+1. A dropdown/slider for selecting a year updating the map showing all the circuits for that year
 2. A checkbox for showing all circuits on the map
-3. A map showing the location of the selected track
+3. A map showing the location(s) of all circuits ( or all of a selected year)
 * CLicking on the map selects a circuit
 4. A line graph showing the fastest laps per year of the selected circuit
 * Hovering the mouse over the line graph selects different years
@@ -27,6 +31,8 @@ Key are the lap times and constructor domination, as it is rumored that rule cha
 1. Data from 1996-2017
 2. map
 3. Fastest laps chart per track
+4. Infowindow showing year and laptime and, if applicable, regulation/formula changes for said year.
+* May also be another visualisation but this data is mainly text, don't currently know how to visualiz this nicely
 4. Percentage pie chart of constructors winning a race
 5. The slider and checkbox
 6. All interactions between the MVP visualizations
