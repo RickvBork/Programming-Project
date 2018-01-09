@@ -35,23 +35,10 @@ For the data structure the following must be considered:
   * Track ID
   * List with dictionaries {'year': xxxx, 'laptime': float}
   
-Something in the following format should work:
+See JSON_example for possible layout.
 
-{  
-   "Circuits":{  
-      "albert_park":{  
-         "Location":{  
-            "lat":"-37.8497",
-            "long":"144.968",
-            "locality":"Melbourne",
-            "country":"Australia"
-         },
-         "data":[  
-            {  
-               "year":1996,
-               "laptime":80.637
-            }
-         ]
-      }
-   }
-}
+## Component description
+
+1. Use Python to:
+..1. Find all circuit IDs http://ergast.com/api/f1/circuits.json
+..* Use this to start building a dict with the structure found in JSON.example
