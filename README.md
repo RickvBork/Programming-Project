@@ -1,3 +1,10 @@
+# Author information:
+
+* Name:		Rick van Bork
+* Std. nr.	11990503
+
+https://rickvbork.github.io/Programming-Project/
+
 # Problem statement
 
 The FIA, the governing body of many automitive sports, have tried to decrease the speed of the cars, mainly from 1994 onwards. However, Formula 1 teams continue to find clever solutions to keep laptimes low to maintain a competitive edge. F1 is currently enjoying an injection of new fans after a Social Media campaign. New fans might benefit from visualizations of one of the most technical sports on earth. Currently, good visualizations are lacking on the F1 site, this creates a gap to be filled.
