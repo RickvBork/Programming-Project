@@ -2,6 +2,8 @@
 
 This file describes the overall design and technical parts of the project.
 
+## API's and Plugins
+
 ## Data Sources
 
 For this project, multiple data sources can be used, depending if the MVP is chosen or a more complete project is finalized.
@@ -18,3 +20,38 @@ For this project, multiple data sources can be used, depending if the MVP is cho
   * URL = http://www.f1db.de/database/season/xxxx/yy/index.html (yy is a two digit number specifying the round for a given year)
   * Can be scraped per year per round for all relevant data (Winning Constructor, Driver, Fastest Lap, Pole 'Q3' Time etc.) ***Except Location***
   * Difficulty might be linking to Ergast API due to differing names for circuits etc. However the following request: http://ergast.com/api/f1/xxxx/yy.json includes lat, long and circuit ID for building a dict coupling the two naming systems if required.
+
+## Data structure
+
+For the data structure the following must be considered:
+
+1. A JSON with all unique tracks for building the map. Contains:
+  * ID identical for all track queries
+  * Country?
+  * Length?
+  * lat and lon for drawing on map (Ergast)
+
+2. A JSON with all fastest/average laptimes per track. Contains:
+  * Track ID
+  * List with dictionaries {'year': xxxx, 'laptime': float}
+  
+Something in the following format should work:
+
+{  
+   "Circuits":{  
+      "albert_park":{  
+         "Location":{  
+            "lat":"-37.8497",
+            "long":"144.968",
+            "locality":"Melbourne",
+            "country":"Australia"
+         },
+         "data":[  
+            {  
+               "year":1996,
+               "laptime":80.637
+            }
+         ]
+      }
+   }
+}
