@@ -41,4 +41,8 @@ See JSON_example for possible layout.
 
 1. Use Python to:
   1. Find all circuit IDs http://ergast.com/api/f1/circuits.json
+  * Iterate over
   * Use this to start building a dict with the structure found in JSON.example
+  2. Use IDs to query for results (winners) http://ergast.com/api/f1/circuits/albert_park/results/1
+  * Calculate average laptimes
+  * OR scrape for qualifying laptime, withing Races key is year and round data for xxxx and yy http://www.f1db.de/database/season/xxxx/yy/index.html
