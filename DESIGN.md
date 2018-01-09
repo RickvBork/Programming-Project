@@ -37,12 +37,52 @@ For the data structure the following must be considered:
   
 See JSON_example for possible layout.
 
-## Component description
+## Component description and data management
 
 1. Use Python to:
   1. Find all circuit IDs http://ergast.com/api/f1/circuits.json
   * Iterate over
   * Use this to start building a dict with the structure found in JSON.example
-  2. Use IDs to query for results (winners) http://ergast.com/api/f1/circuits/albert_park/results/1
+  2. Use IDs to query for results (winners) http://ergast.com/api/f1/circuits/"ID"/results/1
   * Calculate average laptimes
   * OR scrape for qualifying laptime, withing Races key is year and round data for xxxx and yy http://www.f1db.de/database/season/xxxx/yy/index.html
+  3. Fill with other relevant information
+  
+Use dict as JSON input for JS.
+
+Components for JavaScript MVP:
+1. Build worldmap function
+2. Line Graph functions
+  * Build first graph function, calls 1 time after user selects a country
+    * Draw title
+    * Draw axes
+    * Draw line
+    * Some crosshair function?
+  * Update Graph functions, calls after a user switches country
+    * Update title
+    * Update axes
+    * Update line
+    * update mouseover crosshairs (hide/show with CSS)
+3. Pie Chart functions (constructors AND race winners)
+  * Build first chart function, calls 1 time after user selects a country. Uses most recent year in the data.
+    * Draw title
+    * Draw legend
+    * Draw Chart
+  * Update Chart functions, calls after a user scrolls over years
+    * Update title
+    * Draw legend
+    * Update Chart
+    
+## APIs & Libraries
+
+1. Ergast API
+  * For getting racedata
+2. D3
+  * For Visualizations
+3. Tooltip
+  * For displaying tooltips
+4. pattern
+  * For possible Web Scraping module
+5. DataMaps
+  * For building a worldmap
+
