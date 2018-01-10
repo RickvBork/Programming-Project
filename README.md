@@ -38,6 +38,10 @@ Key are the lap times and constructor domination, as it is rumored that rule cha
 6. All interactions between the MVP visualizations
 7. Map interaction for selecting a circuit
 
+## Mock visualization and main MVP features
+
+![Alt text](doc/project_layout.jpg?raw=true "Title")
+
 **Extra's**\
  All the other features plus data from 1950-2017 (requires scraping several sites for single fastest laps).
  Workaround is averaging laptimes, over a GP.
@@ -57,5 +61,6 @@ Key are the lap times and constructor domination, as it is rumored that rule cha
 
 **Hardest Parts**
 * Scraping for additional data.
-* Using new API
+* Using new API.
+* Average laptimes are more affected by rain races, as the race may be stopped for long durations creating outliers. Scraping for single fastest laps should make visualization better.
 
