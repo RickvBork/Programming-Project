@@ -72,7 +72,11 @@ Components for JavaScript MVP:
     * Update title
     * Draw legend
     * Update Chart
-    
+
+## Diagram of MVP
+
+![Alt text](doc/Diagram.jpg?raw=true "Title")
+
 ## APIs & Libraries
 
 1. Ergast API
