@@ -26,6 +26,7 @@ def get_data(URL):
 def main():
 
 	circuit_data = {}
+	circuits_list = []
 
 	# URL link to JSON data of all circuit locations (73 unique circuits)
 	URL = 'http://ergast.com/api/f1/circuits.json?limit=73'
@@ -41,9 +42,11 @@ def main():
 		# gets location data
 		location_data = circuit['Location']
 
+		# make list of data needed for map
+		circuits_list.append({'circuitId': circuitId, 'circuit_name': circuit_name, 'latitude': location_data['lat'], 'longitude': location_data['long'], 'radius': 4, 'fillKey': 'bubble'})
+
 		# appends location data and name to id
-		circuit_data[circuitId] = {'Location': location_data}
-		circuit_data[circuitId]['circuit_name'] = circuit_name
+		circuit_data[circuitId] = {'circuit_name': circuit_name}
 
 		# queries for data of every race winner on this circuit
 		URL = 'http://ergast.com/api/f1/circuits/' + circuitId + '/results/1.json?limit=67'
@@ -66,8 +69,11 @@ def main():
 
 			circuit_data[circuitId]['data'].append({'season': season, 'round': s_round, 'time': time})
 
-	with open('circuits.json', 'w') as outfile:
+	with open('circuit_races.json', 'w') as outfile:
 		json.dump(circuit_data, outfile)
+
+	with open('circuit_map.json', 'w') as outfile:
+		json.dump(circuits_list, outfile)
 
 if __name__ == "__main__":
 	main()

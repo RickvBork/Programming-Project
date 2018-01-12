@@ -6,14 +6,12 @@
 
 		<title>Github Pages RickvBork</title>
 
-		<script src="https://d3js.org/d3.v4.min.js"></script>
-
 		<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
-
 		<script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+		<script src="//datamaps.github.io/scripts/0.4.4/datamaps.world.min.js"></script>
+		<script src="https://d3js.org/d3-queue.v3.min.js"></script>
 
-		<script src="/datamaps.world.min.js"></script>
-
+		<link rel = "stylesheet" type = "text/css" href = "project.css"/>
 		<script src = "F1.js" charset = "utf-8"></script>
 	</head>
 	<body>
@@ -22,5 +20,9 @@
 			<p>Stdn. nr. 11990503</p>
 		</div>
 		<div id="container" style="position: relative; width: 500px; height: 300px;"></div>
+		<div>
+			<svg id='lineGraph' width="500" height="300"></svg>
+			<svg id='pieChart' width="250" height="250"></svg>
+		<div>
 	</body>
 </html>

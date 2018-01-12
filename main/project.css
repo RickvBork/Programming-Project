@@ -1,0 +1,16 @@
+/*
+* Nooit puntcomma's
+*/
+
+.axis path {
+	stroke: steelblue;
+	stroke-width: 1;
+	shape-rendering: crispEdges;
+	fill: none;
+}
+
+.line { 
+	stroke: steelblue;
+	stroke-width: 8;
+	fill: none;
+}
