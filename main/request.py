@@ -3,10 +3,11 @@ Make GET request for data
 '''
 
 # import library
+import helpers as hlp
 import requests
 import sys
 import json
-
+from collections import Counter as count
 
 def get_data(URL):
 	'''
@@ -69,9 +70,11 @@ def main():
 
 			circuit_data[circuitId]['data'].append({'season': season, 'round': s_round, 'time': time})
 
+	# circuitId keying races held on it
 	with open('circuit_races.json', 'w') as outfile:
 		json.dump(circuit_data, outfile)
 
+	# list of dicts of circuitIds keying location data
 	with open('circuit_map.json', 'w') as outfile:
 		json.dump(circuits_list, outfile)
 

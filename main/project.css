@@ -3,14 +3,36 @@
 */
 
 .axis path {
-	stroke: steelblue;
+	stroke: black;
 	stroke-width: 1;
 	shape-rendering: crispEdges;
 	fill: none;
 }
 
 .line { 
-	stroke: steelblue;
-	stroke-width: 8;
+	stroke: grey;
+	stroke-width: 2;
 	fill: none;
+}
+
+.circle {
+	fill: white;
+	stroke: grey;
+	stroke-width: 3px;
+}
+
+.overlay {
+	fill: none;
+	stroke: none;
+	pointer-events: all;
+}
+
+.focusLine {
+	fill: none;
+	stroke: black;
+	stroke-width: 0.5px;
+}
+
+.focusCircle {
+	fill: black;
 }
