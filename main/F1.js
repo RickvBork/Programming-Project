@@ -11,13 +11,14 @@ window.onload = function() {
 	d3.queue()
 		.defer(d3.json, relDataPath + 'circuit_map.json')
 		.defer(d3.json, relDataPath + 'circuit_races.json')
+		.defer(d3.json, relDataPath + 'choro_races.json')
 		.await(mainFunction);
 };
 
 /*
 * Main Function
 */
-function mainFunction(error, circuits_data, race_data) {
+function mainFunction(error, circuits_data, race_data, choro) {
 
 	if (error) throw error;
 
@@ -25,29 +26,63 @@ function mainFunction(error, circuits_data, race_data) {
 	circuits = circuits_data;
 	races = race_data;
 
-	drawMap(circuits);
+	drawMap(circuits, choro);
 };
 
 /*
 * Draw the markers for the map
 */
-function drawMap(data) {
+function drawMap(data, choro) {
 
-	// var fillColor = d3.scale.threshold()
-	// 	.domain([.05, .10])
-	// 	.range(['#333333', '#888888']);
+	// get the min and max values in choro data
+	var seasons = Object.keys(choro),
+	domain = [0, Math.max.apply(null, Object.values(choro[seasons[seasons.length - 1]]))];
 
-	// keep track of current map conditions
-	var zoomScaleFactor = 1;
-	var translate = [0, 0];
+	// sets the color transition on the map
+	var firstColor = '#f4f4f4',
+	lastColor = '#ff1e00',
+	step = 25;
+
+	// builds the color gradient function
+	var color = gradientBuilder(firstColor, lastColor, step, domain);
 
 	// draws the world map in Mercator projection
 	var map = new Datamap({element: document.getElementById('container'),	
+		projection: 'mercator',
 		fills: {
 			'bubble': '#7f7f7f',
-			defaultFill: 'rgb(171, 221, 164)'
+
+			// if default == first color in scale, countries with 0 races blend in background
+			defaultFill: firstColor
+		},
+		geographyConfig: {
+			borderWidth: 0.25,
+			borderColor: '#7e7e7e'
 		}
 	});
+
+	var slider = document.getElementById("myRange");
+	var output = document.getElementById("demo");
+
+	// Update the current slider value (each time you drag the slider handle)
+	slider.oninput = function() {
+
+		// output.innerHTML = this.value;
+		console.log('slider: ', this.value);
+
+		var season = this.value,
+		colorData = {},
+		isos = Object.keys(choro[season]);
+
+		isos.forEach(function(iso) {
+			colorData[iso] = color(choro[season][iso])
+		});
+		map.updateChoropleth(colorData);
+	};
+
+	// keep track of current map conditions
+	var zoomScaleFactor = 1,
+	translate = [0, 0];
 
 	// select all countries
 	var countries = map.svg.selectAll('.datamaps-subunit');
@@ -86,9 +121,9 @@ function drawMap(data) {
 		console.log(d.id);
 		console.log(translate);
 
-		var selectedGeo = {'RUS': '#ED1ADF'};
-		  selectedGeo[d.id] = '#ED1ADF';
-		  map.updateChoropleth(selectedGeo);
+		// var selectedGeo = {'RUS': '#ED1ADF'};
+		//   selectedGeo[d.id] = '#ED1ADF';
+		//   map.updateChoropleth(selectedGeo);
 	});
 
 	map.svg.call(d3.behavior.zoom().on("zoom", redraw));
@@ -97,11 +132,27 @@ function drawMap(data) {
 		map.svg.selectAll("g").attr("transform", "scale(" + zoomScaleFactor + ")" + "translate(" + d3.event.translate + ")");
 
 		console.log(d3.event.translate);
-
 	};
 
 	//draw dots at circuit location
 	drawMarkers(data, map);
+};
+
+/*
+* Builds a gradient function that, when given an integer, returns a hex color
+* string. 
+*/
+function gradientBuilder(fromColor, toColor, step, domain) {
+
+	// make a linear scale with the domain and colors
+	var linearColor = d3.scale.linear().domain(domain).range([fromColor, toColor]),
+	colorDomain = [1],
+	colorRange = [fromColor];
+	for (var i = step; i < domain[1] + step; i += step) {
+		colorDomain.push(i);
+		colorRange.push(linearColor(i));
+	};
+	return d3.scale.threshold().domain(colorDomain).range(colorRange);
 };
 
 /*
@@ -136,20 +187,14 @@ function update(newData) {
 
 	// check is graph has been created
 	if (d3.selectAll('#lineGraph').select('path').empty() == true) {
-
-		// graph has not been created
 		makeLineGraph(newData);
 		makePieChart();
 	}
 
 	// user selected new circuit, update line graph
 	else {
-
-		// select old data and force into correct values
 		var oldData = datum.shift();
 		forceValue(oldData);
-
-		// graph has been created
 		updateLineGraph(oldData, newData);
 	};
 };
@@ -158,42 +203,28 @@ function update(newData) {
 * Draw the line graph
 */
 function makeLineGraph(data) {
-	
+
 	// set domains
 	var xDomain = d3.extent(data, function(d) { return d.season; })
 	var yDomain = d3.extent(data, function(d) { return d.time; });
 
-	// indexes
-	var get = updateDict['line'],
-	getX = get['x'],
-	getY = get['y'];
-
-	// get variables
-	var g = get['g'],
-	width = get['width'],
-	line = get['line'],
-	height = get['height'],
-	xScale = getX['scale'],
-	yScale = getY['scale'],
-	xAxis = getX['axis'],
-	yAxis = getY['axis'];
-
-	// set scales
-	var xScale = xScale.domain(xDomain);
-	var yScale = yScale.domain(yDomain);
+	// gets graph variables
+	var graph = updateDict.graph;
 
 	// set axes
-	var xAxis = xAxis.scale(xScale);
-	var yAxis = yAxis.scale(yScale);
+	graph.xAxis.scale(graph.xScale.domain(xDomain));
+	graph.yAxis.scale(graph.yScale.domain(yDomain));
+
+	var g = graph.g;
 
 	g.append('g')
 		.attr('class', 'x axis')
- 		.attr('transform', 'translate(0, ' + height + ')')
-			.call(xAxis);
+ 		.attr('transform', 'translate(0, ' + graph.height + ')')
+			.call(graph.xAxis);
 
 	g.append('g')
 		.attr('class', 'y axis')
-		.call(yAxis)
+		.call(graph.yAxis)
 		.append('text')
 			.attr('transform', 'rotate(-90)')
 			.attr('y', 6)
@@ -204,16 +235,7 @@ function makeLineGraph(data) {
 	// creates line on graph
 	g.append('path')
 		.attr('class', 'line')
-		.attr('d', line(data));
-
-	// creates circles on graph
-	g.selectAll('circle')
-		.data(data)
-		.enter().append('circle')
-		.attr('cx', function(d) { return xScale(d.season); })
-		.attr('cy', function(d) { return yScale(d.time); })
-		.attr('r', 5)
-		.attr('class', 'circle');
+		.attr('d', graph.line(data));
 
 	// add crosshair functionality
 	var mousePoint = g.append('g')
@@ -241,35 +263,49 @@ function makeLineGraph(data) {
 	// returns index to a date in data when given a valid date
 	var bisectDate = d3.bisector(function(d) { return d.season; }).left;
 
+	// draw circles on line, click requires to do this last after overlay rect
+	g.selectAll('circle')
+		.data(data)
+		.enter().append('circle')
+		.attr('cx', function(d) { return graph.xScale(d.season); })
+		.attr('cy', function(d) { return graph.yScale(d.time); })
+		.attr('r', 5)
+		.attr('class', 'lineCircle')
+		.on('click', function(d) { updatePie(d.season); });
+
 	// selects correct index and hides and shows layers of mousePoint
 	g.append('rect')
 		.attr('class', 'overlay')
-		.attr('width', width)
-		.attr('height', height)
+		.attr('width', graph.width)
+		.attr('height', graph.height)
 		.on('mouseover', function() { mousePoint.style('display', null); })
 		.on('mouseout', function() { mousePoint.style('display', 'none'); })
 		.on('mousemove', function() {
 
 			var mouse = d3.mouse(this),				// mouse coordinate array
-			mouseDate = xScale.invert(mouse[0]), 	// a mouse date
+			mouseDate = graph.xScale.invert(mouse[0]),			// a mouse date
 			i = bisectDate(data, mouseDate), 		// index to mouse date
 			d0 = data[i - 1], 						// trailing data
 			d1 = data[i], 							// leading data
 
 			// true data
 			d = mouseDate - d0.season > d1.season - mouseDate ? d1 : d0,
-			x = xScale(d.season), 					// true date x-coordinate
-			y = yScale(d.time); 					// true date y-coordinate
+			x = graph.xScale(d.season), 			// true date x-coordinate
+			y = graph.yScale(d.time); 				// true date y-coordinate
 
 			// update X-focusline
 			mousePoint.select('#focusLineX')
-				.attr('x1', x).attr('y1', yScale(yDomain[0]))
-				.attr('x2', x).attr('y2', yScale(yDomain[1]));
+				.attr('x1', x)
+				.attr('y1', graph.yScale(yDomain[0]))
+				.attr('x2', x)
+				.attr('y2', graph.yScale(yDomain[1]));
 
 			// update Y-focusline
 			mousePoint.select('#focusLineY')
-				.attr('x1', xScale(xDomain[0])).attr('y1', y)
-				.attr('x2', xScale(xDomain[1])).attr('y2', y);
+				.attr('x1', graph.xScale(xDomain[0]))
+				.attr('y1', y)
+				.attr('x2', graph.xScale(xDomain[1]))
+				.attr('y2', y);
 
 			// update tracking circle
 			mousePoint.select('#focusCircle')
@@ -280,43 +316,60 @@ function makeLineGraph(data) {
 
 function updateLineGraph(oldData, newData) {
 
-	// indexes
-	var get = updateDict['line'],
-	getX = get['x'],
-	getY = get['y'];
-
-	// get variables
-	var line = get['line'],
-	xScale = getX['scale'],
-	yScale = getY['scale'],
-	xAxis = getX['axis'],
-	yAxis = getY['axis'];
-
 	// set domains
-	xScale.domain(d3.extent(newData, function(d) { return d.season; }));
-	yScale.domain(d3.extent(newData, function(d) { return d.time; }));
+	var xDomain = d3.extent(newData, function(d) { return d.season; })
+	var yDomain = d3.extent(newData, function(d) { return d.time; });
+
+	// gets graph variables
+	var graph = updateDict.graph;
+
+	// set axes
+	graph.xAxis.scale(graph.xScale.domain(xDomain));
+	graph.yAxis.scale(graph.yScale.domain(yDomain));
 
 	// Select the section we want to apply our changes to
-	var svg = d3.select("body").transition();
+	var svg = d3.select("#lineGraph").transition();
 
 	// update x-axis
 	svg.select('.y.axis')
 		.duration(750)
-		.call(yAxis);
+		.call(graph.yAxis);
 
 	// update y-axis
 	svg.select('.x.axis')
 		.duration(750)
-		.call(xAxis);
+		.call(graph.xAxis);
 
-	// update line
+	// update line with difference interpolation
 	svg.select('.line')
+		.duration(750)
 		.attrTween('d', function (d) {
 			var previous = d3.select(this).attr('d');
-			return d3.interpolatePath(previous, line(newData));
+			return d3.interpolatePath(previous, graph.line(newData));
 		});
 
-	// update circles
+	// TODO find out why selection requires g element
+	var circle = d3.select('#lineGraphG').selectAll('.lineCircle')
+		.data(newData);
+
+	circle.exit().transition()	// remove excess elements
+		.duration(250)
+		.attr('r', 0)
+		.remove();
+
+	circle.enter().append("circle")		// append new circles
+		.attr('r', 0)
+		.attr('class', '.lineCircle')
+		.on('click', function(d) { updatePie(d.season); });
+
+	circle.transition()		// first shift to correct locations
+		.duration(750)
+			.attr("cx", function(d) { return graph.xScale(d.season); })
+			.attr("cy", function(d) { return graph.yScale(d.time); })
+		.transition()		// then increase radius
+		.duration(250)
+			.attr('r', 5)
+			.attr('class', 'lineCircle');
 };
 
 function makePieChart() {
@@ -374,7 +427,7 @@ function buildUpdate() {
 
 	// set transform container
 	g = svg.append("g")
-		.attr('class', 't')
+		.attr('id', 'lineGraphG')
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")"),
 
 	// set scales
@@ -390,9 +443,13 @@ function buildUpdate() {
 		.x(function(d) { return xScale(d.season); })
 		.y(function(d) { return yScale(d.time); });
 
-	var dict = {'line': {'g': g, 'line': line, 'width': width, 'height': height, 'x': {'scale': xScale, 'axis': xAxis}, 'y': {'scale': yScale, 'axis': yAxis}}};
+	var dict = {'graph': {'g': g, 'line': line, 'width': width, 'height': height, 'xScale': xScale, 'xAxis': xAxis, 'yScale': yScale, 'yAxis': yAxis}};
 
 	return dict;
+};
+
+function updatePie(season) {
+	console.log(season);
 };
 
 // formats race dataset

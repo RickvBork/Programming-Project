@@ -30,13 +30,10 @@ def gen_total_races():
 		# get circuits raced in the season
 		circuits = data['CircuitTable']['Circuits']
 
-		# start season dict
-		country_data[season] = {}
-
 		# loop over circuits
 		for circuit in circuits:
 
-			# check is country is in DataMaps
+			# check if country is in DataMaps
 			country = hlp.check_country(circuit['Location']['country'])
 
 			# translate to DataMaps iso
@@ -50,8 +47,17 @@ def gen_total_races():
 				# start new race counter for a country
 				total_races[iso] = 1
 
-		# add all previous race data
-		country_data[season] = total_races
+		country_data[int(season)] = dict(total_races)
+
+	seasons = country_data.keys()
+	isos = total_races.keys()
+
+	for season in seasons:
+		for iso in isos:
+			print(season, iso)
+			if not iso in country_data[season]:
+				print(season, iso)
+				country_data[season][iso] = 0
 
 	with open('choro_races.json', 'w') as outfile:
 		json.dump(country_data, outfile)

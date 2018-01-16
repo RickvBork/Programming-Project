@@ -15,7 +15,7 @@
 	fill: none;
 }
 
-.circle {
+.lineCircle {
 	fill: white;
 	stroke: grey;
 	stroke-width: 3px;
@@ -35,4 +35,9 @@
 
 .focusCircle {
 	fill: black;
+}
+
+#container {
+	overflow: hidden;
+	background: lightcyan;
 }
