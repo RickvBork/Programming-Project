@@ -160,21 +160,21 @@ function gradientBuilder(fromColor, toColor, step, domain) {
 */
 function drawMarkers(data, map) {
 
-	map.bubbles(data, {
-		popupTemplate: function (geo, data) {
-			return ['<div class="hoverinfo"' + data.circuitId + '>',
-			'<br/>' +  data.circuit_name + '',
-			'</div>'].join('');
-		}
-	});
+	// map.bubbles(data, {
+	// 	popupTemplate: function (geo, data) {
+	// 		return ['<div class="hoverinfo"' + data.circuitId + '>',
+	// 		'<br/>' +  data.circuit_name + '',
+	// 		'</div>'].join('');
+	// 	}
+	// });
 
-	// get the name from a click on a bubble
-	d3.selectAll(".datamaps-bubble").on('click', function(bubble) {
+	// // get the name from a click on a bubble
+	// d3.selectAll(".datamaps-bubble").on('click', function(bubble) {
 		
-		var dataNew = races[bubble.circuitId]['data'];
-		datum.push(dataNew);
-		update(dataNew);
-	});
+	// 	var dataNew = races[bubble.circuitId]['data'];
+	// 	datum.push(dataNew);
+	// 	update(dataNew);
+	// });
 };
 
 /*
