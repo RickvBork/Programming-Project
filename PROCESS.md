@@ -31,3 +31,6 @@ Done today:
 TODO:
 * Show circles AFTER clicking a country
 * Show the map instantialized from 1950 (currently blank)
+
+![Alt text](doc/goalMap0.jpg?raw=true "Title")
+![Alt text](doc/goalMap1.jpg?raw=true "Title")
