@@ -32,6 +32,6 @@ TODO:
 * Show circles AFTER clicking a country
 * Show the map instantialized from 1950 (currently blank)
 
-### current map
+### Goal map
 <img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/goalMap0.jpg" width="400"><img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/goalMap1.jpg" width="400">
 
