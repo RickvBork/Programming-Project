@@ -33,5 +33,8 @@ TODO:
 * Show the map instantialized from 1950 (currently blank)
 
 ### Goal map
-<img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/goalMap0.jpg" width="400"><img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/goalMap1.jpg" width="400">
+<img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/goalMap0.jpg" width="430"><img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/goalMap1.jpg" width="430">
+
+### Current Map
+<img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/currentMap0.jpg" width="430"><img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/currentMap1.jpg" width="430">
 
