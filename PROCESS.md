@@ -1,4 +1,6 @@
-# day 2 (Week 2)
+# Week 2
+
+## day 2
 
 I have added the line graph. I chose to include points into the graph denoting the year (season) in which the race took place.
 The season circles serve a goal, to show the user gaps in continuation of a race, as sometimes a race is excluded from the calander,
@@ -15,3 +17,17 @@ difference between default interpolation and interpolation with the library incl
 The update function uses a dict with variables that are accessed via indexing. The goal is to add all update variables for all graphs 
 into this dict. Otherwhise variables have to be created locally, but passed along multiple functions, creating a dataflow that is difficult
 to follow.
+
+## day 3
+
+Done today:
+* Update function for the circles along the line graph
+* Function that returns a color gradient function.
+  * The function is built for easy alteration of the step size and changing of the color gradient.
+  * Currently there are steps of 25 creating a four range color gradient.
+* Update choropleth function to update the map.
+* Crude slider to alter the map colors.
+
+TODO:
+* Show circles AFTER clicking a country
+* Show the map instantialized from 1950 (currently blank)
