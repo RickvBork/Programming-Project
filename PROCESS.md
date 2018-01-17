@@ -47,6 +47,10 @@ Done today:
 * Minor cleanup of drawMap, reduced redundancy by adding functions
 * Changed the logic for drawing the line graph
   * Now an empty graph is made to show the user that a graph can be made
+  
+### Current Map with empty graph
+<img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/currentMap2.jpg" width="430"><img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/currentMap3.jpg" width="430">  
+
 * Update focus made functional
 * On click added to focus element to update TODO piechart
   * On click on focus as it is easier than clicking on small dots is difficult
