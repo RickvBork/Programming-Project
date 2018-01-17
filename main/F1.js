@@ -12,21 +12,25 @@ window.onload = function() {
 		.defer(d3.json, relDataPath + 'circuit_map.json')
 		.defer(d3.json, relDataPath + 'circuit_races.json')
 		.defer(d3.json, relDataPath + 'choro_races.json')
+		.defer(d3.json, relDataPath + 'winners.json')
 		.await(mainFunction);
 };
 
 /*
-* Main Function
+* Main Function.
 */
-function mainFunction(error, circuits_data, race_data, choro) {
+function mainFunction(error, circuits_data, race_data, choro, winners) {
 
 	if (error) throw error;
+
+	console.log(winners);
 
 	// set global data
 	circuits = circuits_data;
 	races = race_data;
 
 	drawMap(circuits, choro);
+	drawLineAxes();
 };
 
 /*
@@ -41,44 +45,49 @@ function drawMap(data, choro) {
 	// sets the color transition on the map
 	var firstColor = '#f4f4f4',
 	lastColor = '#ff1e00',
-	step = 25;
+	step = 25,
+	color = gradientBuilder(firstColor, lastColor, step, domain);
 
-	// builds the color gradient function
-	var color = gradientBuilder(firstColor, lastColor, step, domain);
+	// get the season on which the slider is initialised
+	var slider = d3.select('#myRange'),
+	INITSEASON = slider.attr('value');
+
+	// build a mapData dict to initialise map
+	var mapData = mapDataBuilder(INITSEASON, color, choro)
 
 	// draws the world map in Mercator projection
 	var map = new Datamap({element: document.getElementById('container'),	
 		projection: 'mercator',
+		geographyConfig: {
+			popupTemplate: function(geography, data) { //this function should just return a string
+          		return '<div class="hoverinfo"><strong>' + geography.properties.name + '</strong></div>';
+        	},
+			borderWidth: 0.25,
+			borderColor: '#7e7e7e',
+	        popupOnHover: true,
+	        highlightOnHover: true,
+	        highlightFillColor: '#999999',
+	        highlightBorderColor: '#7e7e7e',
+	        highlightBorderWidth: 1,
+	        highlightBorderOpacity: 1
+		},
 		fills: {
 			'bubble': '#7f7f7f',
 
 			// if default == first color in scale, countries with 0 races blend in background
 			defaultFill: firstColor
 		},
-		geographyConfig: {
-			borderWidth: 0.25,
-			borderColor: '#7e7e7e'
-		}
+		data: mapData
 	});
 
-	var slider = document.getElementById("myRange");
-	var output = document.getElementById("demo");
-
 	// Update the current slider value (each time you drag the slider handle)
-	slider.oninput = function() {
+	slider.on('input', function() {
 
-		// output.innerHTML = this.value;
-		console.log('slider: ', this.value);
-
+		// build a new mapData dict and update map
 		var season = this.value,
-		colorData = {},
-		isos = Object.keys(choro[season]);
-
-		isos.forEach(function(iso) {
-			colorData[iso] = color(choro[season][iso])
-		});
-		map.updateChoropleth(colorData);
-	};
+		mapData = mapDataBuilder(season, color, choro)
+		map.updateChoropleth(mapData);
+	});
 
 	// keep track of current map conditions
 	var zoomScaleFactor = 1,
@@ -89,6 +98,7 @@ function drawMap(data, choro) {
 
 	// adds on click
 	countries.on('click', function(d) {
+
 		var centroid = map.path.centroid(d),
 		bbox = this.getBBox();
 
@@ -120,10 +130,6 @@ function drawMap(data, choro) {
 
 		console.log(d.id);
 		console.log(translate);
-
-		// var selectedGeo = {'RUS': '#ED1ADF'};
-		//   selectedGeo[d.id] = '#ED1ADF';
-		//   map.updateChoropleth(selectedGeo);
 	});
 
 	map.svg.call(d3.behavior.zoom().on("zoom", redraw));
@@ -139,6 +145,26 @@ function drawMap(data, choro) {
 };
 
 /*
+* Builds the data dict in Datamaps format. Used to initialise and update the 
+* map.
+*/
+function mapDataBuilder(INITSEASON, color, data) {
+
+	mapData = {},
+	isos = Object.keys(data[INITSEASON]);
+
+	isos.forEach(function(iso) {
+
+		mapData[iso] = {
+			fillColor: color(data[INITSEASON][iso]),
+			races: data[INITSEASON][iso]
+		}
+	});
+
+	return mapData;
+};
+
+/*
 * Builds a gradient function that, when given an integer, returns a hex color
 * string. 
 */
@@ -149,9 +175,12 @@ function gradientBuilder(fromColor, toColor, step, domain) {
 	colorDomain = [1],
 	colorRange = [fromColor];
 	for (var i = step; i < domain[1] + step; i += step) {
+
 		colorDomain.push(i);
 		colorRange.push(linearColor(i));
 	};
+
+	// return the gradient function
 	return d3.scale.threshold().domain(colorDomain).range(colorRange);
 };
 
@@ -161,7 +190,9 @@ function gradientBuilder(fromColor, toColor, step, domain) {
 function drawMarkers(data, map) {
 
 	map.bubbles(data, {
+
 		popupTemplate: function (geo, data) {
+
 			return ['<div class="hoverinfo"' + data.circuitId + '>',
 			'<br/>' +  data.circuit_name + '',
 			'</div>'].join('');
@@ -171,56 +202,41 @@ function drawMarkers(data, map) {
 	// get the name from a click on a bubble
 	d3.selectAll(".datamaps-bubble").on('click', function(bubble) {
 		
+		// TODO for update pie
+		var circuitId = bubble.circuitId;
+
 		var dataNew = races[bubble.circuitId]['data'];
 		datum.push(dataNew);
-		update(dataNew);
+		update(dataNew, circuitId);
 	});
 };
 
 /*
 * Placeholder for all update functions
 */
-function update(newData) {
+function update(newData, circuitId) {
 
 	// force into season into date objects
 	forceValue(newData);
 
-	// check is graph has been created
-	if (d3.selectAll('#lineGraph').select('path').empty() == true) {
-		makeLineGraph(newData);
-		makePieChart();
-	}
-
-	// user selected new circuit, update line graph
-	else {
-		var oldData = datum.shift();
-		forceValue(oldData);
-		updateLineGraph(oldData, newData);
-	};
+	var oldData = datum.shift();
+	forceValue(oldData);
+	updateLineGraph(oldData, newData, circuitId);
 };
 
 /*
-* Draw the line graph
+* Draws empty axes to be filled with data.
 */
-function makeLineGraph(data) {
-
-	// set domains
-	var xDomain = d3.extent(data, function(d) { return d.season; })
-	var yDomain = d3.extent(data, function(d) { return d.time; });
+function drawLineAxes() {
 
 	// gets graph variables
-	var graph = updateDict.graph;
-
-	// set axes
-	graph.xAxis.scale(graph.xScale.domain(xDomain));
-	graph.yAxis.scale(graph.yScale.domain(yDomain));
-
-	var g = graph.g;
+	var graph = updateDict.graph,
+	g = graph.g;
 
 	g.append('g')
 		.attr('class', 'x axis')
  		.attr('transform', 'translate(0, ' + graph.height + ')')
-			.call(graph.xAxis);
+		.call(graph.xAxis);
 
 	g.append('g')
 		.attr('class', 'y axis')
@@ -230,14 +246,13 @@ function makeLineGraph(data) {
 			.attr('y', 6)
 			.attr('dy', '.71em')
 			.attr('text-anchor', 'end')
-			.text('Test');
+			.text('Laptimes');
 
-	// creates line on graph
+	// creates line container on graph
 	g.append('path')
-		.attr('class', 'line')
-		.attr('d', graph.line(data));
+		.attr('class', 'line');
 
-	// add crosshair functionality
+	// create focus container
 	var mousePoint = g.append('g')
 		.attr('class', 'focus')
 		.style('display', 'none');
@@ -260,61 +275,19 @@ function makeLineGraph(data) {
 		.attr('r', 4)
 		.attr('class', 'focusCircle');
 
-	// returns index to a date in data when given a valid date
-	var bisectDate = d3.bisector(function(d) { return d.season; }).left;
-
-	// draw circles on line, click requires to do this last after overlay rect
-	g.selectAll('circle')
-		.data(data)
-		.enter().append('circle')
-		.attr('cx', function(d) { return graph.xScale(d.season); })
-		.attr('cy', function(d) { return graph.yScale(d.time); })
-		.attr('r', 5)
-		.attr('class', 'lineCircle')
-		.on('click', function(d) { updatePie(d.season); });
-
-	// selects correct index and hides and shows layers of mousePoint
+	// append the overlay class
 	g.append('rect')
 		.attr('class', 'overlay')
 		.attr('width', graph.width)
-		.attr('height', graph.height)
-		.on('mouseover', function() { mousePoint.style('display', null); })
-		.on('mouseout', function() { mousePoint.style('display', 'none'); })
-		.on('mousemove', function() {
-
-			var mouse = d3.mouse(this),				// mouse coordinate array
-			mouseDate = graph.xScale.invert(mouse[0]),			// a mouse date
-			i = bisectDate(data, mouseDate), 		// index to mouse date
-			d0 = data[i - 1], 						// trailing data
-			d1 = data[i], 							// leading data
-
-			// true data
-			d = mouseDate - d0.season > d1.season - mouseDate ? d1 : d0,
-			x = graph.xScale(d.season), 			// true date x-coordinate
-			y = graph.yScale(d.time); 				// true date y-coordinate
-
-			// update X-focusline
-			mousePoint.select('#focusLineX')
-				.attr('x1', x)
-				.attr('y1', graph.yScale(yDomain[0]))
-				.attr('x2', x)
-				.attr('y2', graph.yScale(yDomain[1]));
-
-			// update Y-focusline
-			mousePoint.select('#focusLineY')
-				.attr('x1', graph.xScale(xDomain[0]))
-				.attr('y1', y)
-				.attr('x2', graph.xScale(xDomain[1]))
-				.attr('y2', y);
-
-			// update tracking circle
-			mousePoint.select('#focusCircle')
-				.attr('cx', x)
-				.attr('cy', y);
-		});
+		.attr('height', graph.height);
 };
 
-function updateLineGraph(oldData, newData) {
+function updateLineGraph(oldData, newData, circuitId) {
+
+	// TODO!
+	if (oldData == newData) {
+		// do something!
+	};
 
 	// set domains
 	var xDomain = d3.extent(newData, function(d) { return d.season; })
@@ -329,6 +302,8 @@ function updateLineGraph(oldData, newData) {
 
 	// Select the section we want to apply our changes to
 	var svg = d3.select("#lineGraph").transition();
+
+	console.log(oldData, newData);
 
 	// update x-axis
 	svg.select('.y.axis')
@@ -359,8 +334,7 @@ function updateLineGraph(oldData, newData) {
 
 	circle.enter().append("circle")		// append new circles
 		.attr('r', 0)
-		.attr('class', '.lineCircle')
-		.on('click', function(d) { updatePie(d.season); });
+		.attr('class', '.lineCircle');
 
 	circle.transition()		// first shift to correct locations
 		.duration(750)
@@ -370,9 +344,59 @@ function updateLineGraph(oldData, newData) {
 		.duration(250)
 			.attr('r', 5)
 			.attr('class', 'lineCircle');
+
+	var mousePoint = d3.select('.focus');
+	var bisectDate = d3.bisector(function(d) { return d.season; }).left;
+
+	var date;
+
+	// Update the focus elements
+	d3.select("#lineGraph").selectAll('.overlay')
+		.on('mouseover', function() { mousePoint.style('display', null); })
+		.on('mouseout', function() { mousePoint.style('display', 'none'); })
+		.on('mousemove', function() {
+
+			var mouse = d3.mouse(this),				// mouse coordinate array
+			mouseDate = graph.xScale.invert(mouse[0]),		// a mouse date
+			i = bisectDate(newData, mouseDate), 	// index to mouse date
+			d0 = newData[i - 1], 					// trailing data
+			d1 = newData[i], 						// leading data
+
+			// true data
+			d = mouseDate - d0.season > d1.season - mouseDate ? d1 : d0,
+			x = graph.xScale(d.season), 			// true date x-coordinate
+			y = graph.yScale(d.time); 				// true date y-coordinate
+
+			date = d.season;
+
+			// update X-focusline
+			mousePoint.select('#focusLineX')
+				.attr('x1', x)
+				.attr('y1', graph.yScale(yDomain[0]))
+				.attr('x2', x)
+				.attr('y2', graph.yScale(yDomain[1]));
+
+			// update Y-focusline
+			mousePoint.select('#focusLineY')
+				.attr('x1', graph.xScale(xDomain[0]))
+				.attr('y1', y)
+				.attr('x2', graph.xScale(xDomain[1]))
+				.attr('y2', y);
+
+			// update tracking circle
+			mousePoint.select('#focusCircle')
+				.attr('cx', x)
+				.attr('cy', y);
+		})
+		.on('click', function() { 
+			season = timeParse(date);
+			updatePie(season, circuitId);
+		});
 };
 
-function makePieChart() {
+function makePieChart(data) {
+
+	var c20 = d3.scale.category20();
 
 	// some mock data
 	var data = [
@@ -417,8 +441,9 @@ function makePieChart() {
 
 function buildUpdate() {
 
-	// mock domain to be updated by data
-	var tempDomain = [0, 0];
+	// mock domain to be updated by data, use invalid date to not show a tick
+	var dateDomain = ['invalid Date', 'invalid Date'],
+	laptimeDomain = [0, 0];
 
 	var svg = d3.select("#lineGraph"),
 	margin = {top: 20, right: 20, bottom: 30, left: 50},
@@ -431,11 +456,12 @@ function buildUpdate() {
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")"),
 
 	// set scales
-	xScale = d3.time.scale().range([0, width]).domain(tempDomain),
-	yScale = d3.scale.linear().range([height, 0]).domain(tempDomain),
+	xScale = d3.time.scale().range([0, width]).domain(dateDomain),
+	yScale = d3.scale.linear().range([height, 0]).domain(laptimeDomain),
 
 	// set axes
-	xAxis = d3.svg.axis().scale(xScale).orient('bottom'),
+	xAxis = d3.svg.axis().scale(xScale).orient('bottom')
+		.tickFormat(d3.time.format("%Y")),			// always show only years
 	yAxis = d3.svg.axis().scale(yScale).orient('left'),
 
 	// set line function
@@ -448,15 +474,28 @@ function buildUpdate() {
 	return dict;
 };
 
-function updatePie(season) {
-	console.log(season);
+function updatePie(season, circuitId) {
+
+	console.log('DO: updatePie', '\nseason: ' + season, '\ncircuitId: ' + circuitId);
 };
 
-// formats race dataset
+/*
+* Formats race dataset. Years are interpreted as Dates. Otherwise, axis  
+* interpreted Date as an integer and added a comma delimiter.
+*/
 function forceValue(data) {
+
 	data.forEach(function(d) {
 		d.season = new Date(d.season);
 	});
 
 	return data;
+};
+
+/*
+* Takes a date object and returns the year.
+*/
+function timeParse(date) {
+
+	return d3.time.format("%Y")(date);
 };
