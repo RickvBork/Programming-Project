@@ -7,6 +7,7 @@
 * Line length: **MAX 80** chars
 * Comments: Same indentation as code block
 * White Rules: After function definition and closing of same function
+* After , **SPACE**
 
 ### Python
 * Function- & var names in **snake_case**
@@ -21,3 +22,4 @@
   * After anonymous function if it cannot fit on single line
   * After opening of every function definition
   * After closing every function
+* After { **SPACE**
