@@ -44,4 +44,16 @@ Done today:
 * Map now initializes with 1950 data
 * Map now updates color AND data values
 * User/Coder can now easily change the step value and the end color using two variables
-* Minor cleanup of drawMap, reduced redundancy by adding functions.
+* Minor cleanup of drawMap, reduced redundancy by adding functions
+* Changed the logic for drawing the line graph
+  * Now an empty graph is made to show the user that a graph can be made
+* Update focus made functional
+* On click added to focus element to update TODO piechart
+  * On click on focus as it is easier than clicking on small dots is difficult
+
+TODO
+* Add text to empty map
+  * i.e. click on dot to create map
+* Show circles AFTER clicking a country
+* Draw pie chart with real data
+* Update pie chart with real data (from focus on click)
