@@ -1,6 +1,6 @@
 # Week 2
 
-## day 2
+## day 1
 
 I have added the line graph. I chose to include points into the graph denoting the year (season) in which the race took place.
 The season circles serve a goal, to show the user gaps in continuation of a race, as sometimes a race is excluded from the calander,
@@ -18,7 +18,7 @@ The update function uses a dict with variables that are accessed via indexing. T
 into this dict. Otherwhise variables have to be created locally, but passed along multiple functions, creating a dataflow that is difficult
 to follow.
 
-## day 3
+## day 2
 
 Done today:
 * Update function for the circles along the line graph
@@ -38,3 +38,10 @@ TODO:
 ### Current Map
 <img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/currentMap0.jpg" width="430"><img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/currentMap1.jpg" width="430">
 
+## day 3
+
+Done today:
+* Map now initializes with 1950 data
+* Map now updates color AND data values
+* User/Coder can now easily change the step value and the end color using two variables
+* Minor cleanup of drawMap, reduced redundancy by adding functions.
