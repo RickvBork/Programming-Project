@@ -52,6 +52,7 @@ Done today:
 <img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/currentMap2.jpg" width="430"><img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/currentMap3.jpg" width="430">  
 
 * Update focus made functional
+* Data for pie chart generated
 * On click added to focus element to update TODO piechart
   * On click on focus as it is easier than clicking on small dots is difficult
 
