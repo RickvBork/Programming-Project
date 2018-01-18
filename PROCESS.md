@@ -62,3 +62,21 @@ TODO
 * Show circles AFTER clicking a country
 * Draw pie chart with real data
 * Update pie chart with real data (from focus on click)
+
+## Day 4
+
+Done today:
+* General pie chart generator coupled to current dataset
+  * Generator has smooth intro animation
+  * Generator has a smooth update animation
+  * Update takes into account changes in data size
+ 
+TODO
+* fix bug in pie chart generator that causes whitespace to appear when using the default pie.sort() function
+  * Bug fixable by  generating data in descending order and using d3.pie().sort(null)
+* fix bug in pie chart update that deletes colors of slices that are deleted after an update
+  * probably caused by inconsistant use of d3.scale.category20();
+* Add text to empty map
+  * i.e. click on dot to create map
+* Show circles AFTER clicking a country
+
