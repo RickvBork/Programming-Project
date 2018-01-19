@@ -84,4 +84,6 @@ TODO
 
 Done today:
 * Cleaned up libs packages
+* Cleaned up data flow in script
+* Tried to get rid of global update variable (no success)
 
