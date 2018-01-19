@@ -80,3 +80,8 @@ TODO
   * i.e. click on dot to create map
 * Show circles AFTER clicking a country
 
+## Day 5
+
+Done today:
+* Cleaned up libs packages
+
