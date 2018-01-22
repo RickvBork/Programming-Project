@@ -87,3 +87,13 @@ Done today:
 * Cleaned up data flow in script
 * Tried to get rid of global update variable (no success)
 
+## Day 6
+
+Done today:
+* Made a color gradient legend (step size == 1)
+* Made a placeholder tooltip coupled to the legend
+
+TODO
+* Couple legend to countries?
+* Style tooltip
+* Make function that correctly returns amount of races from mouseover
