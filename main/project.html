@@ -6,11 +6,12 @@
 
 		<title>Github Pages RickvBork</title>
 
-		<script src='//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js'></script>
-		<script src='//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js'></script>
-		<script src='//datamaps.github.io/scripts/0.4.4/datamaps.world.min.js'></script>
-		<script src='https://d3js.org/d3-queue.v3.min.js'></script>
-		<script src='../libs/d3-interpolate-path.js' type='text/javascript'></script>
+		<script src='../libs/d3 3.5.17/d3.min.js'></script>
+		<script src='../libs/topojson 3.0.2/topojson.min.js'></script>
+		<script src='../libs/datamaps 0.5.0/datamaps.world.min.js'></script>
+		<script src='../libs/d3-queue/d3-queue.v3.min.js'></script>
+		<script src='../libs/d3-interpolate-path/d3-interpolate-path.js' type='text/javascript'></script>
+		<script src='../libs/d3-tip/d3-tip.v0.8.0.js' type ='text/javascript'></script>
 
 		<link rel = 'stylesheet' type = 'text/css' href = 'project.css'/>
 		<script src = 'F1.js' type='text/javascript'></script>
@@ -27,6 +28,10 @@
 		<div>
 			<svg id='lineGraph' width='500' height='300'></svg>
 			<svg id='pieChart' width='250' height='250'></svg>
-		<div>
+		</div>
+		<form>
+		  <label><input type="radio" name="dataset" value="data1" checked> Apples</label>
+		  <label><input type="radio" name="dataset" value="data2"> Oranges</label>
+		</form>
 	</body>
 </html>

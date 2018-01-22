@@ -1,5 +1,4 @@
-var updateDict,
-datum = [];
+var updateDict;
 
 // load the DOM and d3 second
 window.onload = function() {
@@ -19,15 +18,14 @@ window.onload = function() {
 /*
 * Main Function.
 */
-function mainFunction(error, circuits_data, race_data, choro, winners) {
+function mainFunction(error, circuits_data, race_data, choro, winners_data) {
 
 	if (error) throw error;
-
-	console.log(winners);
 
 	// set global data
 	circuits = circuits_data;
 	races = race_data;
+	winners = winners_data;
 
 	drawMap(circuits, choro);
 	drawLineAxes();
@@ -43,10 +41,16 @@ function drawMap(data, choro) {
 	domain = [0, Math.max.apply(null, Object.values(choro[seasons[seasons.length - 1]]))];
 
 	// sets the color transition on the map
-	var firstColor = '#f4f4f4',
-	lastColor = '#ff1e00',
-	step = 25,
-	color = gradientBuilder(firstColor, lastColor, step, domain);
+	var firstColor = '#dcb2b2',
+	lastColor = '#8b0000',
+	defaultFill = '#f4f4f4',
+	step = 1,
+	color = gradientBuilder(defaultFill, firstColor, lastColor, step, domain);
+
+	var container = d3.select('#container'),
+	margin = {top: 0, right: 100, bottom: 0, left: 0},
+	width =+ parseInt(container.style('width'), 10) - margin.left - margin.right,
+	height =+ parseInt(container.style("height"), 10) - margin.top - margin.bottom;
 
 	// get the season on which the slider is initialised
 	var slider = d3.select('#myRange'),
@@ -56,26 +60,28 @@ function drawMap(data, choro) {
 	var mapData = mapDataBuilder(INITSEASON, color, choro)
 
 	// draws the world map in Mercator projection
-	var map = new Datamap({element: document.getElementById('container'),	
+	var map = new Datamap({element: document.getElementById('container'),
+		height: height,
+		width: width,	
 		projection: 'mercator',
 		geographyConfig: {
 			popupTemplate: function(geography, data) { //this function should just return a string
-          		return '<div class="hoverinfo"><strong>' + geography.properties.name + '</strong></div>';
-        	},
+				return '<div class="hoverinfo"><strong>' + geography.properties.name + '</strong></div>';
+			},
 			borderWidth: 0.25,
 			borderColor: '#7e7e7e',
-	        popupOnHover: true,
-	        highlightOnHover: true,
-	        highlightFillColor: '#999999',
-	        highlightBorderColor: '#7e7e7e',
-	        highlightBorderWidth: 1,
-	        highlightBorderOpacity: 1
+			popupOnHover: true,
+			highlightOnHover: true,
+			highlightFillColor: '#999999',
+			highlightBorderColor: '#7e7e7e',
+			highlightBorderWidth: 1,
+			highlightBorderOpacity: 1
 		},
 		fills: {
 			'bubble': '#7f7f7f',
 
 			// if default == first color in scale, countries with 0 races blend in background
-			defaultFill: firstColor
+			defaultFill: defaultFill
 		},
 		data: mapData
 	});
@@ -142,6 +148,71 @@ function drawMap(data, choro) {
 
 	//draw dots at circuit location
 	drawMarkers(data, map);
+
+	buildLegend();
+
+	function buildLegend() {
+
+		console.log(width + margin.right);
+
+		// add some margin to the right
+		var map = d3.select('.datamap')
+			.attr('width', width + margin.right);
+
+		var fromColor = '#ffa474',
+		toColor = '#8b0000';
+
+		// create a definition element for legend
+		var defs = map.append("defs");
+
+		var legendBar = defs.append("linearGradient")
+			.attr("id", "linear-gradient");
+
+		// vertical gradient from 0 to 100%
+		legendBar
+		    .attr("x1", "0%")
+		    .attr("y1", "0%")
+		    .attr("x2", "0%")
+		    .attr("y2", "100%");
+
+		// set the color for the start (0%)
+		legendBar.append("stop") 
+		    .attr("offset", "0%")   
+		    .attr("stop-color", "#ffa474");
+
+		// set the color for the end (100%)
+		legendBar.append("stop") 
+		    .attr("offset", "100%")   
+		    .attr("stop-color", "#8b0000");
+
+		// sets the legendBar dimensions
+		var barWidth = width / 40,
+		barHeight = height - (height / 3);
+
+		// TODO make function returning right race number
+		var tip = d3.tip().html(function(d) {
+		 	return "<strong>Races:</strong> <span>" + (d3.mouse(this)[1] - barHeight / 4) + "</span>";
+		})
+		.offset(function(d) { console.log(d3.mouse(this)[1]); return [d3.mouse(this)[1] - 50, 50]; });
+
+		// call the tooltip
+		map.call(tip);
+
+		// draw the rectangle and fill with gradient
+		map.append("rect")
+			.attr("width", barWidth)
+			.attr("height", barHeight)
+			.attr('x', width + barWidth)
+			.attr('y', barHeight / 4)
+			.style("fill", "url(#linear-gradient)")
+			.on('mousemove', tip.show)
+			.on('mouseout', tip.hide);
+
+		map.append('text')
+			.attr('x', 450)
+			.attr('text-anchor', 'end')
+			.text('test')
+	};
 };
 
 /*
@@ -168,12 +239,12 @@ function mapDataBuilder(INITSEASON, color, data) {
 * Builds a gradient function that, when given an integer, returns a hex color
 * string. 
 */
-function gradientBuilder(fromColor, toColor, step, domain) {
+function gradientBuilder(defaultFill, fromColor, toColor, step, domain) {
 
 	// make a linear scale with the domain and colors
 	var linearColor = d3.scale.linear().domain(domain).range([fromColor, toColor]),
 	colorDomain = [1],
-	colorRange = [fromColor];
+	colorRange = [defaultFill];
 	for (var i = step; i < domain[1] + step; i += step) {
 
 		colorDomain.push(i);
@@ -194,7 +265,7 @@ function drawMarkers(data, map) {
 		popupTemplate: function (geo, data) {
 
 			return ['<div class="hoverinfo"' + data.circuitId + '>',
-			'<br/>' +  data.circuit_name + '',
+			'<br/>' + data.circuit_name + '',
 			'</div>'].join('');
 		}
 	});
@@ -205,23 +276,13 @@ function drawMarkers(data, map) {
 		// TODO for update pie
 		var circuitId = bubble.circuitId;
 
-		var dataNew = races[bubble.circuitId]['data'];
-		datum.push(dataNew);
-		update(dataNew, circuitId);
+		// select new data for line graph
+		var newData = races[circuitId]['data'];
+		
+		// force into season into date objects
+		forceValue(newData);
+		updateLineGraph(newData, circuitId);
 	});
-};
-
-/*
-* Placeholder for all update functions
-*/
-function update(newData, circuitId) {
-
-	// force into season into date objects
-	forceValue(newData);
-
-	var oldData = datum.shift();
-	forceValue(oldData);
-	updateLineGraph(oldData, newData, circuitId);
 };
 
 /*
@@ -282,12 +343,7 @@ function drawLineAxes() {
 		.attr('height', graph.height);
 };
 
-function updateLineGraph(oldData, newData, circuitId) {
-
-	// TODO!
-	if (oldData == newData) {
-		// do something!
-	};
+function updateLineGraph(newData, circuitId) {
 
 	// set domains
 	var xDomain = d3.extent(newData, function(d) { return d.season; })
@@ -303,7 +359,7 @@ function updateLineGraph(oldData, newData, circuitId) {
 	// Select the section we want to apply our changes to
 	var svg = d3.select("#lineGraph").transition();
 
-	console.log(oldData, newData);
+	console.log(newData);
 
 	// update x-axis
 	svg.select('.y.axis')
@@ -348,26 +404,16 @@ function updateLineGraph(oldData, newData, circuitId) {
 	var mousePoint = d3.select('.focus');
 	var bisectDate = d3.bisector(function(d) { return d.season; }).left;
 
-	var date;
-
 	// Update the focus elements
 	d3.select("#lineGraph").selectAll('.overlay')
 		.on('mouseover', function() { mousePoint.style('display', null); })
 		.on('mouseout', function() { mousePoint.style('display', 'none'); })
 		.on('mousemove', function() {
 
-			var mouse = d3.mouse(this),				// mouse coordinate array
-			mouseDate = graph.xScale.invert(mouse[0]),		// a mouse date
-			i = bisectDate(newData, mouseDate), 	// index to mouse date
-			d0 = newData[i - 1], 					// trailing data
-			d1 = newData[i], 						// leading data
-
-			// true data
-			d = mouseDate - d0.season > d1.season - mouseDate ? d1 : d0,
+			var mouse = d3.mouse(this),				// get mouse coordinates
+			d = getTrueData(mouse),
 			x = graph.xScale(d.season), 			// true date x-coordinate
 			y = graph.yScale(d.time); 				// true date y-coordinate
-
-			date = d.season;
 
 			// update X-focusline
 			mousePoint.select('#focusLineX')
@@ -389,98 +435,219 @@ function updateLineGraph(oldData, newData, circuitId) {
 				.attr('cy', y);
 		})
 		.on('click', function() { 
-			season = timeParse(date);
-			updatePie(season, circuitId);
+			
+			var mouse = d3.mouse(this),				// get mouse coordinates
+			d = getTrueData(mouse),
+			season = timeParse(d.season);			// parse into season format
+
+			// access winner data of correct season
+			var data = winners[season];
+
+			// TODO find better way differentiate between the update and draw
+			if (d3.select('#pieChart').select('g').empty() == true) {
+
+				// builds the pie chart
+				makePieChart(data);
+			}
+			else {
+
+				// TODO update pie chart here
+				updatePie(data);
+			}
 		});
+
+	/*
+	* From current mouse coordinates on a graph, returns data closest to the 
+	* location of the mouse.
+	*/
+	function getTrueData(mouseCoordinates) {
+
+		var mouseDate = graph.xScale.invert(mouseCoordinates[0]), // mousedate
+		i = bisectDate(newData, mouseDate), 			// index to mouse date
+		d0 = newData[i - 1], 							// trailing data
+		d1 = newData[i]; 								// leading data
+
+		// return the data closest to the mouse
+		return mouseDate - d0.season > d1.season - mouseDate ? d1 : d0;
+	};
 };
 
 function makePieChart(data) {
 
-	var c20 = d3.scale.category20();
+	console.log('DO: makePieChart', '\nData: ');
+	console.log(data);
 
-	// some mock data
-	var data = [
-		{'team': 'Red Bull Racing', 'won': 9, 'color': 'purple'},
-		{'team': 'McLaren Mercedes', 'won': 5, 'color': 'grey'},
-		{'team': 'Ferrari', 'won': 5, 'color': 'red'}
-	];
+	var width = 250,
+	height = 250,
+	radius = Math.min(width, height) / 2;
 
-	var svg = d3.select("#pieChart"),
-	margin = {top: 20, right: 20, bottom: 30, left: 50},
-	width =+ svg.attr("width"),
-	height =+ svg.attr("height");
+	var color = d3.scale.category20();
 
-	var radius = 100;
-
-	var g = svg.append("g")
-		.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
-	// set arc generator function
 	var arc = d3.svg.arc()
-		.outerRadius(radius)
-		.innerRadius(10);
+		.outerRadius(radius - 20);
 
+	// TODO sorting defaults to descending order, set data to descending and disable sort with pie().sort(null) default sort produces a visual bug where whitespace is created on change.
 	var pie = d3.layout.pie()
-		.value(function(d) { return d.won; });
+		.value(function(d) { return d.value; })
+		.sort(null);
 
-	var slices = g.selectAll(".slice")
-		.data(pie(data))
-		.enter().append("g")
-		.attr("class", "slice")
-	
-	// make slices
-	slices.append("path")
-		.attr("d", arc)
-		.attr("fill", function(d) { return d.data.color; });
+	var svg = d3.select("#pieChart")
+		.append("g")
+		 .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-	slices.append("text")
-		.attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
-		.style("text-anchor", "middle")
-		.text(function(d) { return d.data.team; });
+	var enterClockwise = {
+		startAngle: 0,
+		endAngle: 0
+	};
+
+	var path = svg.selectAll("path")
+	.data(pie(data))
+	.enter().append("path")
+		.attr("fill", function(d, i) { return color(i); })
+		.attr("d", arc(enterClockwise))
+		.each(function(d) {
+		this._current = {
+		 	data: d.data,
+			value: d.value,
+			startAngle: enterClockwise.startAngle,
+			endAngle: enterClockwise.endAngle
+		}
+		}); // store the initial values
+
+	// use stored values to update to the final pie chart
+	path.transition()
+		.duration(750)
+		.attrTween("d", arcTween);
+};
+
+/*
+* TODO Functions need arc function to work.
+*/
+function arcTween(a) {
+
+	// TODO
+	var arc = d3.svg.arc()
+		.outerRadius(125 - 20);
+
+	var i = d3.interpolate(this._current, a);
+	this._current = i(0);
+	return function(t) { return arc(i(t)); };
+};
+
+/*
+* TODO Functions need arc function to work.
+*/
+function arcTweenOut(a) {
+
+	// TODO
+	var arc = d3.svg.arc()
+		.outerRadius(125 - 20);
+
+	var i = d3.interpolate(this._current, {
+		startAngle: Math.PI * 2, endAngle: Math.PI * 2, value: 0
+	});
+
+	this._current = i(0);
+	return function (t) { return arc(i(t)); };
+};
+
+function updatePie(data) {
+
+	console.log('updatePie', '\nData: ');
+	console.log(data);
+
+	// TODO better selection by adding id to g element
+	var path = d3.select('#pieChart').select('g').selectAll('path'),
+	pie = d3.layout.pie()
+		.value(function(d) { return d.value; })
+		.sort(null),
+
+	arc = d3.svg.arc()
+		.outerRadius(125 - 20),
+
+	enterAntiClockwise = {
+		startAngle: Math.PI * 2,
+		endAngle: Math.PI * 2
+	},
+
+	color = d3.scale.category20();
+
+	path = path.data(pie(data)); // update the data
+
+	// set the start and end angles to Math.PI * 2 so we can transition
+	// anticlockwise to the actual values later
+	path.enter().append("path")
+		.attr("fill", function (d, i) {
+			return color(i);
+		})
+		.attr("d", arc(enterAntiClockwise))
+		.each(function (d) {
+			this._current = {
+			data: d.data,
+			value: d.value,
+			startAngle: enterAntiClockwise.startAngle,
+			endAngle: enterAntiClockwise.endAngle
+			};
+		}); // store the initial values
+
+	path.exit()
+		.transition()
+		.duration(750)
+		.attrTween('d', arcTweenOut)
+		.remove() // now remove the exiting arcs
+
+	path.transition().duration(750).attrTween("d", arcTween); // redraw the arcs
 };
 
 function buildUpdate() {
 
-	// mock domain to be updated by data, use invalid date to not show a tick
-	var dateDomain = ['invalid Date', 'invalid Date'],
-	laptimeDomain = [0, 0];
+	var dict = {};
+	dict['graph'] = graphUpdate();
 
-	var svg = d3.select("#lineGraph"),
-	margin = {top: 20, right: 20, bottom: 30, left: 50},
-	width =+ svg.attr("width") - margin.left - margin.right,
-	height =+ svg.attr("height") - margin.top - margin.bottom,
-
-	// set transform container
-	g = svg.append("g")
-		.attr('id', 'lineGraphG')
-		.attr("transform", "translate(" + margin.left + "," + margin.top + ")"),
-
-	// set scales
-	xScale = d3.time.scale().range([0, width]).domain(dateDomain),
-	yScale = d3.scale.linear().range([height, 0]).domain(laptimeDomain),
-
-	// set axes
-	xAxis = d3.svg.axis().scale(xScale).orient('bottom')
-		.tickFormat(d3.time.format("%Y")),			// always show only years
-	yAxis = d3.svg.axis().scale(yScale).orient('left'),
-
-	// set line function
-	line = d3.svg.line()
-		.x(function(d) { return xScale(d.season); })
-		.y(function(d) { return yScale(d.time); });
-
-	var dict = {'graph': {'g': g, 'line': line, 'width': width, 'height': height, 'xScale': xScale, 'xAxis': xAxis, 'yScale': yScale, 'yAxis': yAxis}};
-
+	// return update dict
 	return dict;
-};
 
-function updatePie(season, circuitId) {
+	/*
+	* Set all functions and variables to update the line graph.
+	*/
+	function graphUpdate() {
 
-	console.log('DO: updatePie', '\nseason: ' + season, '\ncircuitId: ' + circuitId);
+		// mock domain to be updated by data, use invalid date to not show a tick
+		var dateDomain = ['invalid Date', 'invalid Date'],
+		laptimeDomain = [0, 0];
+
+		var svg = d3.select("#lineGraph"),
+		margin = {top: 20, right: 20, bottom: 30, left: 50},
+		width =+ svg.attr("width") - margin.left - margin.right,
+		height =+ svg.attr("height") - margin.top - margin.bottom;
+
+		// set scales
+		var xScale = d3.time.scale().range([0, width]).domain(dateDomain),
+		yScale = d3.scale.linear().range([height, 0]).domain(laptimeDomain);
+
+		var dict = {
+			'g': svg.append("g")
+				.attr('id', 'lineGraphG')
+				.attr("transform", "translate(" + margin.left + "," + margin.top + ")"), 
+			'line': d3.svg.line()
+				.x(function(d) { return xScale(d.season); })
+				.y(function(d) { return yScale(d.time); }), 
+			'width': width, 
+			'height': height, 
+			'xScale': xScale, 
+			'xAxis': d3.svg.axis().scale(xScale).orient('bottom')
+				.tickFormat(d3.time.format("%Y")), 
+			'yScale': yScale, 
+			'yAxis': d3.svg.axis().scale(yScale).orient('left')
+		};
+
+		// return graph update dict
+		return dict;
+	};
 };
 
 /*
-* Formats race dataset. Years are interpreted as Dates. Otherwise, axis  
+* Formats race dataset. Years are interpreted as Dates. Otherwise, axis
 * interpreted Date as an integer and added a comma delimiter.
 */
 function forceValue(data) {
