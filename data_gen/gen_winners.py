@@ -51,8 +51,8 @@ def gen_winners():
 		for constructor in constructors:
 
 			win_dict = {}
-			win_dict['constructor'] = constructor
-			win_dict['wins'] = constructor_wins.count(constructor)
+			win_dict['label'] = constructor
+			win_dict['value'] = constructor_wins.count(constructor)
 			winners[season].append(win_dict)
 
 	# 44 unique winners as of 2017
