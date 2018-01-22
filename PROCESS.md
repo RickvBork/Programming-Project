@@ -97,3 +97,5 @@ TODO
 * Couple legend to countries?
 * Style tooltip
 * Make function that correctly returns amount of races from mouseover
+
+<img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/legendMap0.jpg" width="430"><img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/legendMap1.jpg" width="430">
