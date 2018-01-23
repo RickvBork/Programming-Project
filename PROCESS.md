@@ -99,3 +99,10 @@ TODO
 * Make function that correctly returns amount of races from mouseover
 
 <img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/legendMap0.jpg" width="430"><img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/legendMap1.jpg" width="430">
+
+## Day 7
+
+Done today:
+* Fixed race amount to be returned
+* Found a method to select countries (paths) based on the returned amount of the legend.
+  * Can be used to give user feedback what countries have a certain amount of races.
