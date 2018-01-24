@@ -3,7 +3,7 @@
 * Name:		Rick van Bork
 * Std. nr.	11990503
 
-https://rickvbork.github.io/Programming-Project/
+https://rickvbork.github.io/Programming-Project/main/project.html
 
 # Problem statement
 
