@@ -66,7 +66,7 @@ function drawMap(data, choro) {
 		projection: 'mercator',
 		geographyConfig: {
 			popupTemplate: function(geography, data) { //this function should just return a string
-				return '<div class="hoverinfo"><strong>' + geography.properties.name + '</strong></div>';
+				return '<div class="hoverinfo"><strong>' + geography.properties.name + '</strong><br>Races: ' + data.races + '</br></div>';
 			},
 			borderWidth: 0.25,
 			borderColor: '#7e7e7e',
@@ -83,7 +83,12 @@ function drawMap(data, choro) {
 			// if default == first color in scale, countries with 0 races blend in background
 			defaultFill: defaultFill
 		},
-		data: mapData
+		data: mapData,
+		done: function(map) {
+            
+            // TODO if needed put stuff here that needs to be done after map draws.
+			// buildLegend();
+		}
 	});
 
 	// Update the current slider value (each time you drag the slider handle)
@@ -153,17 +158,11 @@ function drawMap(data, choro) {
 
 	function buildLegend() {
 
-		console.log(width + margin.right);
-
 		// add some margin to the right
-		var map = d3.select('.datamap')
-			.attr('width', width + margin.right);
-
-		var fromColor = '#ffa474',
-		toColor = '#8b0000';
+		map.svg.attr('width', width + margin.right);
 
 		// create a definition element for legend
-		var defs = map.append("defs");
+		var defs = map.svg.append("defs");
 
 		var legendBar = defs.append("linearGradient")
 			.attr("id", "linear-gradient");
@@ -178,40 +177,64 @@ function drawMap(data, choro) {
 		// set the color for the start (0%)
 		legendBar.append("stop") 
 		    .attr("offset", "0%")   
-		    .attr("stop-color", "#ffa474");
+		    .attr("stop-color", firstColor);
 
 		// set the color for the end (100%)
 		legendBar.append("stop") 
 		    .attr("offset", "100%")   
-		    .attr("stop-color", "#8b0000");
+		    .attr("stop-color", lastColor);
 
 		// sets the legendBar dimensions
 		var barWidth = width / 40,
 		barHeight = height - (height / 3);
 
-		// TODO make function returning right race number
-		var tip = d3.tip().html(function(d) {
-		 	return "<strong>Races:</strong> <span>" + (d3.mouse(this)[1] - barHeight / 4) + "</span>";
+		// returns a float representation of the number of races
+		var getRaceNumber = d3.scale.linear().domain([50, barHeight + 50])
+			.range(domain);
+
+		// displays a tip div with the number of races coupled to the legendBar
+		var tip = d3.tip().html(function() {
+		 	return "<span>Races: " + Math.round(getRaceNumber(d3.event.offsetY)) + "</span>";
 		})
-		.offset(function(d) { console.log(d3.mouse(this)[1]); return [d3.mouse(this)[1] - 50, 50]; });
+		.offset(function() { return [d3.event.offsetY - 39, 0]; })
+		.attr('class', 'd3-tip');
+
+		// TODO test selection
+		console.log(JSON.parse(d3.selectAll('path[data-info]')['0']['0'].dataset.info).races == 1);
 
 		// call the tooltip
-		map.call(tip);
+		map.svg.call(tip);
 
 		// draw the rectangle and fill with gradient
-		map.append("rect")
+		map.svg.append("rect")
 			.attr("width", barWidth)
 			.attr("height", barHeight)
 			.attr('x', width + barWidth)
 			.attr('y', barHeight / 4)
 			.style("fill", "url(#linear-gradient)")
-			.on('mousemove', tip.show)
-			.on('mouseout', tip.hide);
+			.on('mousemove', function() {
 
-		map.append('text')
-			.attr('x', 450)
-			.attr('text-anchor', 'end')
-			.text('test')
+				var value = Math.round(getRaceNumber(d3.event.offsetY));
+
+				console.log(map.borderWidth);
+
+				tip.show();
+
+				countries[0].forEach(function(d) {
+
+					var path = d3.select(d);
+
+					if (path.attr('data-info') && JSON.parse(path.attr('data-info')).races == value) {
+
+						path.style('stroke-width', 2);
+					}
+					else if (path.style('stroke-width') != 0.25) {
+
+						path.style('stroke-width', 0.25);
+					};
+				});
+			})
+			.on('mouseout', tip.hide);
 	};
 };
 
