@@ -87,6 +87,8 @@ Done today:
 * Cleaned up data flow in script
 * Tried to get rid of global update variable (no success)
 
+# Week 3
+
 ## Day 6
 
 Done today:
@@ -106,3 +108,11 @@ Done today:
 * Fixed race amount to be returned
 * Found a method to select countries (paths) based on the returned amount of the legend.
   * Can be used to give user feedback what countries have a certain amount of races.
+
+
+## Day 8
+
+Done today:
+* Coupled legendBar mouseover to the map to give user feedback on the countries with a given race value.
+  * The border width of a country semi-permanently changes size if the user selects via the legend mouseover.
+  * The border width decreases on subsequent mouseovers and selects new countries to change the border width.
