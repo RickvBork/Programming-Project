@@ -3,7 +3,7 @@
 * Name:		Rick van Bork
 * Std. nr.	11990503
 
-<li><a href='main\project.html'>F1 Data Visualizations</a></li>
+https://github.com/RickvBork/Programming-Project/
 
 # Problem statement
 
