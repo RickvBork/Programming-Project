@@ -122,3 +122,6 @@ Done today:
 Done Today:
 * Added a delay/transition to the map legend selector.
   * It is now easier for the user to select a country based on the number of races held there.
+* Improved map zoom function (multiple drag actions and after zoom to country still buggy).
+  * Drag value changes and shifts map
+  * After zoom to country and multiple drags, the next country zoom and drag causes an abrupt shift caused by the drag value not being [0, 0] anymore.
