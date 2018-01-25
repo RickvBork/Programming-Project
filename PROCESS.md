@@ -116,3 +116,9 @@ Done today:
 * Coupled legendBar mouseover to the map to give user feedback on the countries with a given race value.
   * The border width of a country semi-permanently changes size if the user selects via the legend mouseover.
   * The border width decreases on subsequent mouseovers and selects new countries to change the border width.
+
+## Day 9
+
+Done Today:
+* Added a delay/transition to the map legend selector.
+  * It is now easier for the user to select a country based on the number of races held there.
