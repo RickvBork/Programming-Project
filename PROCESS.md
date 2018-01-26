@@ -125,3 +125,12 @@ Done Today:
 * Improved map zoom function (multiple drag actions and after zoom to country still buggy).
   * Drag value changes and shifts map
   * After zoom to country and multiple drags, the next country zoom and drag causes an abrupt shift caused by the drag value not being [0, 0] anymore.
+  
+## Day 10
+
+Done today:
+* Overhauled the map translation and scaling, translation is now based on projection rather than <g> transformation.
+  * Circles now correctly resize on scale change.
+  * Circles now correctly change location based on updated projection.
+  * Drag, scroll zoom and click to center all work correctly in series.
+  * Only bug is circles lag after country click due to differences in transition timings of paths and circles.
