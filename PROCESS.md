@@ -134,3 +134,6 @@ Done today:
   * Circles now correctly change location based on updated projection.
   * Drag, scroll zoom and click to center all work correctly in series.
   * Only bug is circles lag after country click due to differences in transition timings of paths and circles.
+* Added country iso to circle data.
+   * Add ISO to class name (or by looping over data) for easy selection after path on click.
+   * TODO show by altering opacity.
