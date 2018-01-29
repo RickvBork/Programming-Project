@@ -163,3 +163,9 @@ Done today:
    * Color bug in Map (max value of 123 races is black not dark red)
    * Color bug in piechart (Caused by color function not shared between draw and update functions)
    * Circuit marker bug (markers not 'fixed' to map when translating after clicking a country)
+   
+ ### Map color bug likely caused by script fault in color gradient builder
+<img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/bug01.jpg" width="430"><img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/bug02.jpg" width="430">
+ 
+### Pie color bug likely caused by not sharing color functions between draw and update
+<img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/bug11.jpg" width="430"><img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/bug12.jpg" width="430">
