@@ -159,3 +159,7 @@ Done today:
  * Titles for piechart and linegraph
  * Tooltip for piechart
  * Webpage layout
+ * Fix bugs
+   * Color bug in Map (max value of 123 races is black not dark red)
+   * Color bug in piechart (Caused by color function not shared between draw and update functions)
+   * Circuit marker bug (markers not 'fixed' to map when translating after clicking a country)
