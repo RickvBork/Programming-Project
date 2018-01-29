@@ -8,30 +8,19 @@ import requests
 import sys
 import json
 from collections import Counter as count
-
-def get_data(URL):
-	'''
-	Gets the data from the Ergast API using a valid URL query.
-	'''
-	try:
-		# do GET request
-		d = requests.get(url = URL)
-		data = d.json()
-		return data
-
-	# prints error and exits
-	except requests.exceptions.RequestException as e:
-		print(e)
-		sys.exit(1)
+import os
 
 def main():
+
+	# move back one directory and go to data folder
+	os.chdir("../data")
 
 	circuit_data = {}
 	circuits_list = []
 
 	# URL link to JSON data of all circuit locations (73 unique circuits)
 	URL = 'http://ergast.com/api/f1/circuits.json?limit=73'
-	circuits = get_data(URL)['MRData']['CircuitTable']['Circuits']
+	circuits = hlp.get_data(URL)['MRData']['CircuitTable']['Circuits']
 
 	# Loop over circuits
 	for circuit in circuits:
@@ -43,15 +32,19 @@ def main():
 		# gets location data
 		location_data = circuit['Location']
 
+		# get the 3 letter ISO code
+		country = hlp.check_country(location_data['country'])
+		iso = hlp.country_iso(country);
+
 		# make list of data needed for map
-		circuits_list.append({'circuitId': circuitId, 'circuit_name': circuit_name, 'latitude': location_data['lat'], 'longitude': location_data['long'], 'radius': 4, 'fillKey': 'bubble'})
+		circuits_list.append({'circuitId': circuitId, 'circuit_name': circuit_name, 'latitude': location_data['lat'], 'longitude': location_data['long'], 'fillKey': 'bubble', 'country': iso})
 
 		# appends location data and name to id
 		circuit_data[circuitId] = {'circuit_name': circuit_name}
 
 		# queries for data of every race winner on this circuit
 		URL = 'http://ergast.com/api/f1/circuits/' + circuitId + '/results/1.json?limit=67'
-		races = get_data(URL)['MRData']['RaceTable']['Races']
+		races = hlp.get_data(URL)['MRData']['RaceTable']['Races']
 
 		circuit_data[circuitId]['data'] = []
 		# loop over race data
@@ -70,12 +63,16 @@ def main():
 
 			circuit_data[circuitId]['data'].append({'season': season, 'round': s_round, 'time': time})
 
+	# circuit_races.json
+
 	# circuitId keying races held on it
-	with open('circuit_races.json', 'w') as outfile:
+	with open('test0.json', 'w') as outfile:
 		json.dump(circuit_data, outfile)
 
+	# circuit_map.json
+
 	# list of dicts of circuitIds keying location data
-	with open('circuit_map.json', 'w') as outfile:
+	with open('test1.json', 'w') as outfile:
 		json.dump(circuits_list, outfile)
 
 if __name__ == "__main__":

@@ -12,7 +12,7 @@ import os
 
 def generate_choro_list():
 
-	# move back one directory
+	# move back one directory and go to data folder
 	os.chdir("../data")
 
 	country_data = []

@@ -2,6 +2,18 @@
 * Nooit puntcomma's
 */
 
+/*
+* Coupling bubbles to map combined with an update choropleth couses fillKey of * the bubble data to be overwritten.
+*/
+.datamaps-bubble {
+	fill: grey !important;  /*datamaps overwrites fillKey after slider*/
+
+}
+
+.datamaps-bubble:hover {
+    fill: #7e7e7e !important;
+}
+
 .axis path {
 	stroke: black;
 	stroke-width: 1;

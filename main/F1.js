@@ -12,13 +12,14 @@ window.onload = function() {
 		.defer(d3.json, relDataPath + 'circuit_races.json')
 		.defer(d3.json, relDataPath + 'choro_races.json')
 		.defer(d3.json, relDataPath + 'winners.json')
+		.defer(d3.json, relDataPath + 'test1.json')
 		.await(mainFunction);
 };
 
 /*
 * Main Function.
 */
-function mainFunction(error, circuits_data, race_data, choro, winners_data) {
+function mainFunction(error, circuits_data, race_data, choro, winners_data, test1) {
 
 	if (error) throw error;
 
@@ -27,14 +28,14 @@ function mainFunction(error, circuits_data, race_data, choro, winners_data) {
 	races = race_data;
 	winners = winners_data;
 
-	drawMap(circuits, choro);
+	drawMap(circuits, choro, test1);
 	drawLineAxes();
 };
 
 /*
 * Draw the markers for the map
 */
-function drawMap(data, choro) {
+function drawMap(data, choro, test1) {
 
 	// get the min and max values in choro data
 	var seasons = Object.keys(choro),
@@ -59,6 +60,8 @@ function drawMap(data, choro) {
 	// build a mapData dict to initialise map
 	var mapData = mapDataBuilder(INITSEASON, color, choro)
 
+	console.log(mapData);
+
 	// draws the world map in Mercator projection
 	var map = new Datamap({element: document.getElementById('container'),
 		height: height,
@@ -78,16 +81,118 @@ function drawMap(data, choro) {
 			highlightBorderOpacity: 1
 		},
 		fills: {
-			'bubble': '#7f7f7f',
 
-			// if default == first color in scale, countries with 0 races blend in background
+			// TODO: broken
+			'bubble': '#FFFFFF',
+
 			defaultFill: defaultFill
 		},
 		data: mapData,
 		done: function(map) {
-            
-            // TODO if needed put stuff here that needs to be done after map draws.
-			// buildLegend();
+
+			drawMarkers(test1, map);
+
+			var projection = map.projection;
+
+			var zoom = d3.behavior.zoom()
+				.translate(projection.translate())
+				.scale(projection.scale())
+				.scaleExtent([50, 600])
+				.on("zoom", zoom);
+
+			var path = d3.geo.path()
+				.projection(map.projection);
+
+			// select countries and circuits
+			var paths = d3.selectAll('.datamaps-subunit');
+			var circles = d3.selectAll('.datamaps-bubble');
+			
+			// show circle functionality
+			var radio0 = d3.select('#radio0');
+			var radio1 = d3.select('#radio1');
+			var circleRadius = 4;
+
+			// groups circle transitions
+			var t  = circles.transition().duration(1000);
+			circles.transition(t).attr('r', circleRadius);
+
+			// show all circuit circles with radio button
+			radio0.on('change', function() {
+				circles.transition(t).attr('r', circleRadius);
+			});
+
+			// hide all circuit circles with radio button
+			radio1.on('change', function() {
+				circles.transition(t).attr('r', 0);
+			});
+
+			// centers on path on click
+			paths.on('click', function(d) {
+				center(d);
+
+				// if the user clicks the correct button
+				if (radio1.property('checked')) {
+
+					// selects the circle based on the country id in class
+					circles.filter('.' + d.id)
+						.transition(t)
+						.attr('r', circleRadius);
+
+					// selects previous selection
+					map.svg.selectAll('circle[r = "4"]').transition(t)
+						.attr('r', 0);
+				};
+			});
+
+			// set mouse zoom on svg element
+			map.svg.call(zoom);
+
+			/*
+			* Adds scroll zoom and mouse drag functionality to the map. 
+			* Updates both paths and circles.
+			*/
+			function zoom() {
+				projection.translate(d3.event.translate).scale(d3.event.scale);
+				paths.attr("d", path);
+
+				circles
+					.attr("cx", function(d) { 
+						return projection([d.longitude ,d.latitude])[0]
+					})
+					.attr("cy", function(d) { 
+						return projection([d.longitude, d.latitude])[1]
+					});
+			};
+
+			/*
+			* Given path data, calculates the center of the path and moves map * to the new center location. Updates both paths and circles.
+			*/
+			function center(d) {
+
+				var centroid = path.centroid(d),
+				translate = projection.translate();
+
+				// calculates correct coordinates
+				var x = translate[0] - centroid[0] + width / 2,
+				y = translate[1] - centroid[1] + height / 2;
+
+				projection.translate([x, y]);
+
+				zoom.translate(projection.translate());
+
+				paths.transition()
+					.duration(1000)
+					.attr("d", path);
+
+				circles.transition()
+					.duration(890)
+					.attr("cx", function(d) { 
+						return projection([d.longitude ,d.latitude])[0]
+					})
+					.attr("cy", function(d) { 
+						return projection([d.longitude, d.latitude])[1]
+					});
+			};
 		}
 	});
 
@@ -100,59 +205,8 @@ function drawMap(data, choro) {
 		map.updateChoropleth(mapData);
 	});
 
-	// keep track of current map conditions
-	var zoomScaleFactor = 1,
-	translate = [0, 0];
-
-	// select all countries
+	// // select all countries
 	var countries = map.svg.selectAll('.datamaps-subunit');
-
-	// adds on click
-	countries.on('click', function(d) {
-
-		var centroid = map.path.centroid(d),
-		bbox = this.getBBox();
-
-		zoomScaleFactor = 300 / bbox.width;
-
-		// 500, 300 placeholders for svg dimensions
-		zoomX = -centroid[0] + zoomOffset(500, zoomScaleFactor),
-		zoomY = -centroid[1] + zoomOffset(300, zoomScaleFactor);
-
-		// keeps track of current location
-		translate = [zoomX, zoomY];
-
-		// set a transform on the parent group element creating a zoom
-		map.svg.selectAll('g').transition()
-			.duration(750)
-			.attr("transform", "scale(" + zoomScaleFactor + ")" + "translate(" + translate + ")");
-
-		/*
-		* Pushes centroid to center of the zoomed in map
-		*/
-		function zoomOffset(dimension, zoom) {
-			return (dimension / zoom) / 2;
-		};
-
-		// crude redraw of border width
-		countries.transition()
-			.duration(250)
-			.style('stroke-width', 1 / zoomScaleFactor);
-
-		console.log(d.id);
-		console.log(translate);
-	});
-
-	map.svg.call(d3.behavior.zoom().on("zoom", redraw));
-
-	function redraw() {
-		map.svg.selectAll("g").attr("transform", "scale(" + zoomScaleFactor + ")" + "translate(" + d3.event.translate + ")");
-
-		console.log(d3.event.translate);
-	};
-
-	//draw dots at circuit location
-	drawMarkers(data, map);
 
 	buildLegend();
 
@@ -169,20 +223,20 @@ function drawMap(data, choro) {
 
 		// vertical gradient from 0 to 100%
 		legendBar
-		    .attr("x1", "0%")
-		    .attr("y1", "0%")
-		    .attr("x2", "0%")
-		    .attr("y2", "100%");
+			.attr("x1", "0%")
+			.attr("y1", "0%")
+			.attr("x2", "0%")
+			.attr("y2", "100%");
 
 		// set the color for the start (0%)
 		legendBar.append("stop") 
-		    .attr("offset", "0%")   
-		    .attr("stop-color", firstColor);
+			.attr("offset", "0%")   
+			.attr("stop-color", firstColor);
 
 		// set the color for the end (100%)
 		legendBar.append("stop") 
-		    .attr("offset", "100%")   
-		    .attr("stop-color", lastColor);
+			.attr("offset", "100%")   
+			.attr("stop-color", lastColor);
 
 		// sets the legendBar dimensions
 		var barWidth = width / 40,
@@ -199,9 +253,6 @@ function drawMap(data, choro) {
 		.offset(function() { return [d3.event.offsetY - 39, 0]; })
 		.attr('class', 'd3-tip');
 
-		// TODO test selection
-		console.log(JSON.parse(d3.selectAll('path[data-info]')['0']['0'].dataset.info).races == 1);
-
 		// call the tooltip
 		map.svg.call(tip);
 
@@ -214,28 +265,40 @@ function drawMap(data, choro) {
 			.style("fill", "url(#linear-gradient)")
 			.on('mousemove', function() {
 
-				var value = Math.round(getRaceNumber(d3.event.offsetY));
-
-				console.log(map.borderWidth);
-
 				tip.show();
-
-				countries[0].forEach(function(d) {
-
-					var path = d3.select(d);
-
-					if (path.attr('data-info') && JSON.parse(path.attr('data-info')).races == value) {
-
-						path.style('stroke-width', 2);
-					}
-					else if (path.style('stroke-width') != 0.25) {
-
-						path.style('stroke-width', 0.25);
-					};
-				});
+				borderChange(countries, getRaceNumber);
 			})
 			.on('mouseout', tip.hide);
 	};
+};
+
+/*
+* Uses the map legend as input and accesses the 
+*/
+function borderChange(paths, getRaceNumber) {
+
+	// get value from legendBar
+	var value = Math.round(getRaceNumber(d3.event.offsetY));
+
+	// loop over all paths
+	paths[0].forEach(function(d) {
+
+		var path = d3.select(d);
+
+		// JSONifies data-info attribute of path and gets value
+		if (path.attr('data-info') && JSON.parse(path.attr('data-info')).races == value) {
+
+			path.transition()
+				.duration(250)
+				.style('stroke-width', 2);
+		}
+		else if (path.style('stroke-width') != 0.25) {
+
+			path.transition()
+				.delay(250)
+				.style('stroke-width', 0.25);
+		};
+	});
 };
 
 /*
@@ -290,22 +353,30 @@ function drawMarkers(data, map) {
 			return ['<div class="hoverinfo"' + data.circuitId + '>',
 			'<br/>' + data.circuit_name + '',
 			'</div>'].join('');
-		}
+		},
+		fillOpacity: 0.5,
+		highlightFillOpacity: 1,
+        highlightBorderWidth: 4,
+        highlightBorderColor: 'rgba(153,153,153, 0.8)'
 	});
 
-	// get the name from a click on a bubble
-	d3.selectAll(".datamaps-bubble").on('click', function(bubble) {
-		
-		// TODO for update pie
-		var circuitId = bubble.circuitId;
+	// select all circles
+	var circles = d3.selectAll('.datamaps-bubble');
+	
+	// set class names coupled to geo for hiding and showing circles
+	circles
+		.attr('class', function(d) { return 'datamaps-bubble ' + d.country })
+		.on('click', function(bubble) {
 
-		// select new data for line graph
-		var newData = races[circuitId]['data'];
-		
-		// force into season into date objects
-		forceValue(newData);
-		updateLineGraph(newData, circuitId);
-	});
+			var circuitId = bubble.circuitId;
+
+			// select new data for line graph
+			var newData = races[circuitId]['data'];
+			
+			// force into season into date objects
+			forceValue(newData);
+			updateLineGraph(newData, circuitId);
+		});
 };
 
 /*
