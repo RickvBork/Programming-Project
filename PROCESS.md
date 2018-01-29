@@ -137,3 +137,25 @@ Done today:
 * Added country iso to circle data.
    * Add ISO to class name (or by looping over data) for easy selection after path on click.
    * TODO show by altering opacity.
+ 
+ # Week 4
+ 
+ ## Day 11
+ 
+ Done today:
+ * Added user feature for showing and removing circuit markers
+ * Code cleanup in map init
+ 
+### User enabled to remove clutter from map
+<img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/currentMap4.jpg" width="430"><img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/currentMap5.jpg" width="430">
+ 
+### Circuit markers can now can be enabled after on click and radius is dependent on size
+<img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/currentMap6.jpg" width="430"><img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/currentMap7.jpg" width="430">
+ 
+ TODO:
+ * Code cleanup
+   * Mainly make update of piechart and line graph part of main init functions
+ * Cleanup of line graph axes for better readability
+ * Titles for piechart and linegraph
+ * Tooltip for piechart
+ * Webpage layout
