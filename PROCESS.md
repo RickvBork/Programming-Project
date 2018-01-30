@@ -169,3 +169,15 @@ Done today:
  
 ### Pie color bug likely caused by not sharing color functions between draw and update
 <img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/bug11.jpg" width="430"><img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/bug12.jpg" width="430">
+
+## Day 12
+
+Done today:
+* Started general layout of site
+  * Features a menu bar
+  * Clickable links that scroll to a certain part of the site
+* Made two scroll to sections of the site
+  * About (general project description)
+  * Visualizations (two rows with visualizations)
+* Fixed a bug with bootstrap overwriting CSS for tooltip
+  
