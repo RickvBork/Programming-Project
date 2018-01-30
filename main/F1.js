@@ -97,7 +97,7 @@ function drawMap(data, choro, test1) {
 			var zoom = d3.behavior.zoom()
 				.translate(projection.translate())
 				.scale(projection.scale())
-				.scaleExtent([50, 600])
+				.scaleExtent([50, 10000])
 				.on("zoom", zoom);
 
 			var path = d3.geo.path()
