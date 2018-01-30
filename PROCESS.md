@@ -176,8 +176,12 @@ Done today:
 * Started general layout of site
   * Features a menu bar
   * Clickable links that scroll to a certain part of the site
+  * Map in styled container
 * Made two scroll to sections of the site
   * About (general project description)
   * Visualizations (two rows with visualizations)
 * Fixed a bug with bootstrap overwriting CSS for tooltip
+
+### (Left) Current webpage (Right) Webpage with correct top (blue yellow div colors are for debugging)
+<img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/webpage0.jpg" width="430"><img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/webpage1.jpg" width="430">
   
