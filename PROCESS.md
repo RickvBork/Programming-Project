@@ -191,4 +191,5 @@ Done today:
 * Fixed color bug in map caused by gradientBuilder
   * Commented and generalised the gradientBuilder function
 * Finished provisional layout of site
+* Fully integrated test data into code (test1)
   
