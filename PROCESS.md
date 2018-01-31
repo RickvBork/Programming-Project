@@ -193,4 +193,7 @@ Done today:
 * Finished provisional layout of site
 * Fully integrated test data into code (test1)
 * Code cleanup in map.done
+
+### Current webpage (blue yellow & red div colors are for debugging)
+<img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/webpage2.jpg" width="430">
   
