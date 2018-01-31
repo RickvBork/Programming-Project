@@ -188,6 +188,7 @@ Done today:
 ## Day 13
 
 Done today:
-* Fixed color bug in map
+* Fixed color bug in map caused by gradientBuilder
+  * Commented and generalised the gradientBuilder function
 * Finished provisional layout of site
   
