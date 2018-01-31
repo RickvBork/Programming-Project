@@ -18,6 +18,8 @@ def main():
 	circuit_data = {}
 	circuits_list = []
 
+	countries = []
+
 	# URL link to JSON data of all circuit locations (73 unique circuits)
 	URL = 'http://ergast.com/api/f1/circuits.json?limit=73'
 	circuits = hlp.get_data(URL)['MRData']['CircuitTable']['Circuits']
@@ -34,7 +36,9 @@ def main():
 
 		# get the 3 letter ISO code
 		country = hlp.check_country(location_data['country'])
-		iso = hlp.country_iso(country);
+		iso = hlp.country_iso(country)
+
+		print(location_data['country'], iso)
 
 		# make list of data needed for map
 		circuits_list.append({'circuitId': circuitId, 'circuit_name': circuit_name, 'latitude': location_data['lat'], 'longitude': location_data['long'], 'fillKey': 'bubble', 'country': iso})

@@ -120,12 +120,17 @@
 
 .row .vis {
   background-color: blue; /*TODO: REMOVE*/
-  height: 500px;
+  height: 400px;
 }
 
-/*adds whitespace between rows*/
+/*sets gutter between row*/
 #row0 {
-  padding-bottom: 50px;
+  padding-bottom: 20px;
+}
+
+/*sets gutter between columns*/
+.vis.col-md-6 {
+  margin-right: 20px;
 }
 
 /*set column containing map in the middle*/
@@ -134,49 +139,142 @@
   margin: 0 auto;
 }
 
-#map-slide-title-container {
+.map.functions {
   position: relative;
-  height: 80%;
+  height: 100%;
   width: 500px;
+  background-color: red; /*TODO: REMOVE*/
 }
 
 /*formatting for map title*/
-#maptitle {
-  height: 75px;
+.title {
+  height: 20%;
   color: #ffffff;
   background-color: #343a40;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
   text-align: center;
+  font-size: 25px;
 }
 
-#maptitle span:nth-child(1) {
-    font-size: 25px;
-}
-
-#maptitle span:nth-child(2) {
+.map.title span:nth-child(2) {
     font-size: 17px;
 }
 
 /*container for both slider and map container*/
 #map-slide-container {
   background-color: yellow; /*TODO: REMOVE*/
-  height: 325px;
+  height: 80%;
   position: absolute;
   bottom: 0px;
 }
 
+/*map position and border*/
 #container {
   overflow: hidden;
   background: lightcyan;
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-  border: 5px solid #343a40;
   float: left;
+}
+
+/*sets all edges around edged divs*/
+.edge {
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  border: 5px solid #343a40;
 }
 
 .slidecontainer {
   position: absolute;
   bottom: 0px;
   width: 100%;
+}
+
+/*sets general options width*/
+.options {
+  width: 200px;
+}
+
+/*container for map options*/
+.map.options {
+  position: relative;
+
+  /*TODO: same as #map-slide-title-container*/
+  height: 100%;
+  float: right;
+  background-color: red; /*TODO: REMOVE*/
+}
+
+/* TODO: options same as #container*/
+.options.edge {
+  height: 75%;
+  background: yellow; /*TODO: REMOVE*/
+}
+
+.form-check {
+  margin-left: 20px;
+  font-size: 18px;
+}
+
+h5 {
+  margin-top: 10px;
+  text-align: center;
+}
+
+/*line under header*/
+h5:after
+{
+  width: 150px;
+  margin-left: 20px;
+  content:' ';
+  display:block;
+  border:1px solid #d3d3d3;
+  border-radius:4px;
+}
+
+.infolist {
+  margin-top: 15px;
+  font-size: 12px;
+}
+
+.infolist li {
+  margin-top: 4px;
+}
+
+#graph-container {
+  /*TODO: same as #map-slide-title-container*/
+  height: 70%;
+  width: 100%;
+  background-color: red; /*TODO: REMOVE*/
+}
+
+/*second title format center and round bottom edges*/
+.title.b{
+  margin: auto;
+  height: 40px;
+  width: 85%;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+}
+
+/**/
+.pie.title {
+  font-size: 15px;
+}
+
+/*subtitle*/
+.pie div span:nth-child(2) {
+  font-size: 12px;
+}
+
+/*pie container div*/
+.pie.contructors {
+  width: 100%;
+  height: 75%;
+  background-color: red;
+}
+
+/*centers pie chart in the container div*/
+#pieChart {
+  display: block;
+  margin: auto;
 }

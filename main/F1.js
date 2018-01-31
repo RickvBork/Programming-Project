@@ -8,7 +8,6 @@ window.onload = function() {
 	var relDataPath = '../data/';
 
 	d3.queue()
-		.defer(d3.json, relDataPath + 'circuit_map.json')
 		.defer(d3.json, relDataPath + 'circuit_races.json')
 		.defer(d3.json, relDataPath + 'choro_races.json')
 		.defer(d3.json, relDataPath + 'winners.json')
@@ -19,23 +18,23 @@ window.onload = function() {
 /*
 * Main Function.
 */
-function mainFunction(error, circuits_data, race_data, choro, winners_data, test1) {
+function mainFunction(error, race_data, choroData, winners_data, markerData) {
 
 	if (error) throw error;
 
 	// set global data
-	circuits = circuits_data;
+	circuits = markerData;
 	races = race_data;
 	winners = winners_data;
 
-	drawMap(circuits, choro, test1);
+	drawMap(markerData, choroData);
 	drawLineAxes();
 };
 
 /*
 * Draw the markers for the map
 */
-function drawMap(data, choro, test1) {
+function drawMap(data, choro) {
 
 	// get the min and max values in choro data
 	var seasons = Object.keys(choro),
@@ -58,9 +57,7 @@ function drawMap(data, choro, test1) {
 	INITSEASON = slider.attr('value');
 
 	// build a mapData dict to initialise map
-	var mapData = mapDataBuilder(INITSEASON, color, choro)
-
-	console.log(mapData);
+	var mapData = mapDataBuilder(INITSEASON, color, choro);
 
 	// draws the world map in Mercator projection
 	var map = new Datamap({element: document.getElementById('container'),
@@ -68,8 +65,12 @@ function drawMap(data, choro, test1) {
 		width: width,	
 		projection: 'mercator',
 		geographyConfig: {
-			popupTemplate: function(geography, data) { //this function should just return a string
-				return '<div class="hoverinfo"><strong>' + geography.properties.name + '</strong><br>Races: ' + data.races + '</br></div>';
+			popupTemplate: function(geography, data) {
+
+				// only shows popup when the country has had a race
+				if (data.races != 0) {
+					return '<div class="hoverinfo"><strong>' + geography.properties.name + '</strong><br>Races: ' + data.races + '</br></div>';
+				};
 			},
 			borderWidth: 0.25,
 			borderColor: '#7e7e7e',
@@ -82,22 +83,23 @@ function drawMap(data, choro, test1) {
 		},
 		fills: {
 
-			// TODO: broken
-			'bubble': '#FFFFFF',
-
 			defaultFill: defaultFill
 		},
 		data: mapData,
 		done: function(map) {
 
-			drawMarkers(test1, map);
+			// draws and returns circle markers
+			var markers = drawMarkers(data, map);
+
+			var circles = markers.circles;
+			var circleRadius = markers.radius;
 
 			var projection = map.projection;
 
 			var zoom = d3.behavior.zoom()
 				.translate(projection.translate())
 				.scale(projection.scale())
-				.scaleExtent([50, 10000])
+				.scaleExtent([50, 1000])
 				.on("zoom", zoom);
 
 			var path = d3.geo.path()
@@ -105,44 +107,6 @@ function drawMap(data, choro, test1) {
 
 			// select countries and circuits
 			var paths = d3.selectAll('.datamaps-subunit');
-			var circles = d3.selectAll('.datamaps-bubble');
-			
-			// show circle functionality
-			var radio0 = d3.select('#radio0');
-			var radio1 = d3.select('#radio1');
-			var circleRadius = 4;
-
-			// groups circle transitions
-			var t  = circles.transition().duration(1000);
-			circles.transition(t).attr('r', circleRadius);
-
-			// show all circuit circles with radio button
-			radio0.on('change', function() {
-				circles.transition(t).attr('r', circleRadius);
-			});
-
-			// hide all circuit circles with radio button
-			radio1.on('change', function() {
-				circles.transition(t).attr('r', 0);
-			});
-
-			// centers on path on click
-			paths.on('click', function(d) {
-				center(d);
-
-				// if the user clicks the correct button
-				if (radio1.property('checked')) {
-
-					// selects the circle based on the country id in class
-					circles.filter('.' + d.id)
-						.transition(t)
-						.attr('r', circleRadius);
-
-					// selects previous selection
-					map.svg.selectAll('circle[r = "4"]').transition(t)
-						.attr('r', 0);
-				};
-			});
 
 			// set mouse zoom on svg element
 			map.svg.call(zoom);
@@ -193,6 +157,9 @@ function drawMap(data, choro, test1) {
 						return projection([d.longitude, d.latitude])[1]
 					});
 			};
+
+			var moveAll = center;
+			showHideMarkers(markers, paths, moveAll, map);
 		}
 	});
 
@@ -272,6 +239,48 @@ function drawMap(data, choro, test1) {
 	};
 };
 
+function showHideMarkers(markers, paths, moveAll, map) {
+
+	// show circle functionality
+	var radio0 = d3.select('#radio0');
+	var radio1 = d3.select('#radio1');
+
+	var circles = markers.circles;
+	var radius = markers.radius;
+
+	// groups circle transitions
+	var t  = circles.transition().duration(1000);
+
+	// show all circuit circles with radio button
+	radio0.on('change', function() {
+		circles.transition(t).attr('r', radius);
+	});
+
+	// hide all circuit circles with radio button
+	radio1.on('change', function() {
+		circles.transition(t).attr('r', 0);
+	});
+
+	// centers on path on click and moves circles
+	paths.on('click', function(d) {
+
+		moveAll(d);
+
+		// if the user clicks the correct button
+		if (radio1.property('checked')) {
+
+			// selects the circle based on the country id in class
+			circles.filter('.' + d.id)
+				.transition(t)
+				.attr('r', radius);
+
+			// selects previous selection
+			map.svg.selectAll('circle[r = "' + radius + '"]').transition(t)
+				.attr('r', 0);
+		};
+	});
+};
+
 /*
 * Uses the map legend as input and accesses the 
 */
@@ -303,41 +312,49 @@ function borderChange(paths, getRaceNumber) {
 
 /*
 * Builds the data dict in Datamaps format. Used to initialise and update the 
-* map.
+* map data and colors for a given dataset.
 */
-function mapDataBuilder(INITSEASON, color, data) {
+function mapDataBuilder(season, color, data) {
 
 	mapData = {},
-	isos = Object.keys(data[INITSEASON]);
+	isos = Object.keys(data[season]);
 
 	isos.forEach(function(iso) {
-
 		mapData[iso] = {
-			fillColor: color(data[INITSEASON][iso]),
-			races: data[INITSEASON][iso]
+			fillColor: color(data[season][iso]),
+			races: data[season][iso]
 		}
 	});
-
 	return mapData;
 };
 
 /*
 * Builds a gradient function that, when given an integer, returns a hex color
-* string. 
+* string. The defaultFillValue will be given the defaultFill color, different 
+* from the linear scale.
 */
-function gradientBuilder(defaultFill, fromColor, toColor, step, domain) {
+function gradientBuilder(defaultFill, fromColor, toColor, step, domain, defaultFillValue = 1) {
 
-	// make a linear scale with the domain and colors
-	var linearColor = d3.scale.linear().domain(domain).range([fromColor, toColor]),
-	colorDomain = [1],
+	// sets start and stop values for linear scale
+	var start = domain[0] + step,
+	stop = domain[1];
+
+	// builds a linear scale with the domain and colors
+	var linearColor = d3.scale.linear().domain([start, stop]).range([fromColor, toColor]);
+
+	// sets the 'value: color' combination not following the linear scale
+	var colorDomain = [defaultFillValue],
 	colorRange = [defaultFill];
-	for (var i = step; i < domain[1] + step; i += step) {
 
-		colorDomain.push(i);
-		colorRange.push(linearColor(i));
+	// builds the linear scale for the rest of the values
+	for (var i = 0; i < stop; i += step) {
+
+		// offsets colors and values by 1 step size
+		colorDomain.push(i + 2 * step);
+		colorRange.push(linearColor(i + step));
 	};
 
-	// return the gradient function
+	// returns the semi gradient function
 	return d3.scale.threshold().domain(colorDomain).range(colorRange);
 };
 
@@ -346,25 +363,28 @@ function gradientBuilder(defaultFill, fromColor, toColor, step, domain) {
 */
 function drawMarkers(data, map) {
 
+	// sets the radius of the markers
+	var circleRadius = 4;
+
 	map.bubbles(data, {
-
 		popupTemplate: function (geo, data) {
-
 			return ['<div class="hoverinfo"' + data.circuitId + '>',
 			'<br/>' + data.circuit_name + '',
 			'</div>'].join('');
 		},
-		fillOpacity: 0.5,
+		fillOpacity: 0.8,
 		highlightFillOpacity: 1,
         highlightBorderWidth: 4,
-        highlightBorderColor: 'rgba(153,153,153, 0.8)'
+        highlightBorderColor: 'rgba(153, 153, 153, 0.8)',
+        radius: circleRadius
 	});
 
 	// select all circles
 	var circles = d3.selectAll('.datamaps-bubble');
-	
+
 	// set class names coupled to geo for hiding and showing circles
 	circles
+		.attr('r', circleRadius)
 		.attr('class', function(d) { return 'datamaps-bubble ' + d.country })
 		.on('click', function(bubble) {
 
@@ -377,6 +397,12 @@ function drawMarkers(data, map) {
 			forceValue(newData);
 			updateLineGraph(newData, circuitId);
 		});
+
+	// returns selection for later zoom and pan functions
+	return {
+		circles: circles, 
+		radius: circleRadius
+	};
 };
 
 /*

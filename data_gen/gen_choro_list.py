@@ -34,6 +34,8 @@ def generate_choro_list():
 	# 73 unique tracks to add to map
 	country_data = hlp.format_choro(country_data)
 
+	print(country_data);
+
 	with open('choropleth_data.json', 'w') as outfile:
 		json.dump(country_data, outfile)
 
