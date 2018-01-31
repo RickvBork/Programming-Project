@@ -192,4 +192,5 @@ Done today:
   * Commented and generalised the gradientBuilder function
 * Finished provisional layout of site
 * Fully integrated test data into code (test1)
+* Code cleanup in map.done
   
