@@ -184,4 +184,10 @@ Done today:
 
 ### (Left) Current webpage (Right) Webpage with correct top (blue yellow div colors are for debugging)
 <img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/webpage0.jpg" width="430"><img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/webpage1.jpg" width="430">
+
+## Day 13
+
+Done today:
+* Fixed color bug in map
+* Finished provisional layout of site
   
