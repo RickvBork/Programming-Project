@@ -196,4 +196,15 @@ Done today:
 
 ### Current webpage (blue yellow & red div colors are for debugging)
 <img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/webpage2.jpg" width="430">
-  
+
+## Day 14
+
+Done today:
+* Factored out functions
+  * slideUpdateMap();
+  * buildLegend();
+  * showHideMarkers();
+* Fixed fill issue with bootstrap rows
+  * Page section (visualizations) width now 100% of screen width
+* Found bug
+  * Not all circuits are drawn (e.g. Red Bull Ring) Check races generating data
