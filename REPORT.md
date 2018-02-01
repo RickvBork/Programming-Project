@@ -2,15 +2,15 @@
  
  # 2. Technical design
  
- ##   * High level overview
+ ## &nbsp;&nbsp; * High level overview
  
- ##   * Low level overview
+ ## &nbsp;&nbsp; * Low level overview
  
- ###     Files
+ ### &nbsp;&nbsp;&nbsp;&nbsp; * Files
  
- ###     Data
+ ### &nbsp;&nbsp;&nbsp;&nbsp;Data
  
- ###     Functions
+ ### &nbsp;&nbsp;&nbsp;&nbsp;Functions
  
  # Challenges & changes
  (defend changes and decisions)
