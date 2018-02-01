@@ -22,7 +22,12 @@ One drawback is that it takes more work to implement this kind of scale than a s
 The color scale also bundels all value: color 'keys' in one function. This is more logical than a linear scale plus an extra check somewhere else in the code.
 
 Moreover, this color scale can easily be altered for any kind of int data, making the map more flexible for later updates and datasets. The predefined argument is already included for easy updates of scales.
- 
+
+```javascript
+function drawMarkers() {};
+```
+
+
  # Challenges & changes
  (defend changes and decisions)
  
