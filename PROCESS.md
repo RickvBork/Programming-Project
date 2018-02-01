@@ -200,14 +200,23 @@ Done today:
 ## Day 14
 
 Done today:
-* Factored out functions
+* Factored out functions and cleaned up code in:
   * slideUpdateMap();
   * buildLegend();
   * showHideMarkers();
+  * mapDataBuilder();
+  * borderChange(); (WIP)
 * Coupled legendBar and tooltip
   * Legend now fully scalable for later updates and changes
 * Fixed fill issue with bootstrap rows
   * Page section (visualizations) width now 100% of screen width
 * Found bug
   * Not all circuits are drawn (e.g. Red Bull Ring) Check races generating data
-  * map.options.data does not have correct dataMaps iso values
+  * map.options.data does not have correct dataMaps iso values (causes borders to not reset)
+
+TODO:
+* Redo choroData
+  * Source of wrong iso codes causing the border bug (UAE is one of the wrong codes)
+* Factor out other functions
+* Make linechart and update one function (for ease of use and scaling)
+* Make piechart and update one function (for ease of use and scaling)
