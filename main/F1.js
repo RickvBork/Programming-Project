@@ -48,13 +48,13 @@ function drawMap(data, choro) {
 	color = gradientBuilder(defaultFill, firstColor, lastColor, step, domain);
 
 	var container = d3.select('#container'),
-	margin = {top: 0, right: 100, bottom: 0, left: 0},
-	width =+ parseInt(container.style('width'), 10) - margin.left - margin.right,
-	height =+ parseInt(container.style("height"), 10) - margin.top - margin.bottom;
+		margin = {top: 0, right: 100, bottom: 0, left: 0},
+		width =+ parseInt(container.style('width'), 10) - margin.left - margin.right,
+		height =+ parseInt(container.style("height"), 10) - margin.top - margin.bottom;
 
 	// get the season on which the slider is initialised
 	var slider = d3.select('#myRange'),
-	INITSEASON = slider.attr('value');
+		INITSEASON = slider.attr('value');
 
 	// build a mapData dict to initialise map
 	var mapData = mapDataBuilder(INITSEASON, color, choro);
@@ -91,14 +91,9 @@ function drawMap(data, choro) {
 			// draws and returns circle markers
 			var markers = drawMarkers(data, map);
 
-			var circles = markers.circles;
-			var circleRadius = markers.radius;
-
-			var projection = map.projection;
-
 			var zoom = d3.behavior.zoom()
-				.translate(projection.translate())
-				.scale(projection.scale())
+				.translate(map.projection.translate())
+				.scale(map.projection.scale())
 				.scaleExtent([50, 1000])
 				.on("zoom", zoom);
 
@@ -116,15 +111,15 @@ function drawMap(data, choro) {
 			* Updates both paths and circles.
 			*/
 			function zoom() {
-				projection.translate(d3.event.translate).scale(d3.event.scale);
+				map.projection.translate(d3.event.translate).scale(d3.event.scale);
 				paths.attr("d", path);
 
-				circles
+				markers.circles
 					.attr("cx", function(d) { 
-						return projection([d.longitude ,d.latitude])[0]
+						return map.projection([d.longitude ,d.latitude])[0]
 					})
 					.attr("cy", function(d) { 
-						return projection([d.longitude, d.latitude])[1]
+						return map.projection([d.longitude, d.latitude])[1]
 					});
 			};
 
@@ -134,131 +129,148 @@ function drawMap(data, choro) {
 			function center(d) {
 
 				var centroid = path.centroid(d),
-				translate = projection.translate();
+					translate = map.projection.translate();
 
 				// calculates correct coordinates
 				var x = translate[0] - centroid[0] + width / 2,
-				y = translate[1] - centroid[1] + height / 2;
+					y = translate[1] - centroid[1] + height / 2;
 
-				projection.translate([x, y]);
+				map.projection.translate([x, y]);
 
-				zoom.translate(projection.translate());
+				zoom.translate(map.projection.translate());
 
 				paths.transition()
 					.duration(1000)
 					.attr("d", path);
 
-				circles.transition()
+				markers.circles.transition()
 					.duration(890)
 					.attr("cx", function(d) { 
-						return projection([d.longitude ,d.latitude])[0]
+						return map.projection([d.longitude ,d.latitude])[0]
 					})
 					.attr("cy", function(d) { 
-						return projection([d.longitude, d.latitude])[1]
+						return map.projection([d.longitude, d.latitude])[1]
 					});
 			};
-
 			var moveAll = center;
+
 			showHideMarkers(markers, paths, moveAll, map);
+			slideUpdateMap(map, choro, color, slider);
+			buildLegend(map, width, height, margin, firstColor, lastColor, domain);
 		}
 	});
+};
 
-	// Update the current slider value (each time you drag the slider handle)
+/*
+* Uses slider input to update the map colors.
+*/
+function slideUpdateMap(map, choro, color, slider) {
+
 	slider.on('input', function() {
 
 		// build a new mapData dict and update map
 		var season = this.value,
-		mapData = mapDataBuilder(season, color, choro)
+			mapData = mapDataBuilder(season, color, choro);
 		map.updateChoropleth(mapData);
 	});
+};
 
-	// // select all countries
+/*
+* Builds the bar next to the map and adds functionality. Adds the space to the * right defined in the margin object to make space for the legend. pBar sets 
+* the height of the bar as a fraction of the height of the map.
+*/
+function buildLegend(map, width, height, margin, firstColor, lastColor, domain, pBar = 2 / 3, barWidth = 10) {
+
+	// adds some margin to the right
+	map.svg.attr('width', width + margin.right);
+
+	// creates a definition element for legend
+	var defs = map.svg.append("defs");
+
+	// sets vertical gradient from 0 to 100%, no horizontal gradient
+	var legendBar = defs.append("linearGradient")
+		.attr("id", "linear-gradient")
+		.attr("x1", "0%")
+		.attr("y1", "0%")
+		.attr("x2", "0%")
+		.attr("y2", "100%");
+
+	// sets the color for the start at 0% of the firstColor value
+	legendBar.append("stop") 
+		.attr("offset", "0%")   
+		.attr("stop-color", firstColor);
+
+	// sets the color for the end at 100% of the lastColor value
+	legendBar.append("stop") 
+		.attr("offset", "100%")   
+		.attr("stop-color", lastColor);
+
+	// sets the legendBar dimensions
+	var barHeight = pBar * height,
+		barStart = (height - barHeight) / 2,
+		barEnd = barStart + barHeight;
+
+	// returns a float representation of the number of races
+	var getLegendValue = d3.scale.linear().domain([barStart, barEnd])
+		.range(domain);
+
+	// displays a tip div with the number of races coupled to the legendBar
+	var tip = d3.tip().html(function() {
+
+	 	return "<span>Races: " + Math.round(getLegendValue(d3.event.offsetY)) + "</span>";
+	})
+	.offset(function() {
+		return [d3.event.offsetY - barStart + 10, 0]; 
+	})
+	.attr('class', 'd3-tip');
+
+	// call the tooltip
+	map.svg.call(tip);
+
+	// select all countries
 	var countries = map.svg.selectAll('.datamaps-subunit');
 
-	buildLegend();
+	// draw the rectangle and fill with gradient
+	map.svg.append("rect")
+		.attr("width", barWidth)
+		.attr("height", barHeight)
+		.attr('x', width + barWidth)
+		.attr('y', barStart)
+		.style("fill", "url(#linear-gradient)")
+		.on('mousemove', function() {
 
-	function buildLegend() {
-
-		// add some margin to the right
-		map.svg.attr('width', width + margin.right);
-
-		// create a definition element for legend
-		var defs = map.svg.append("defs");
-
-		var legendBar = defs.append("linearGradient")
-			.attr("id", "linear-gradient");
-
-		// vertical gradient from 0 to 100%
-		legendBar
-			.attr("x1", "0%")
-			.attr("y1", "0%")
-			.attr("x2", "0%")
-			.attr("y2", "100%");
-
-		// set the color for the start (0%)
-		legendBar.append("stop") 
-			.attr("offset", "0%")   
-			.attr("stop-color", firstColor);
-
-		// set the color for the end (100%)
-		legendBar.append("stop") 
-			.attr("offset", "100%")   
-			.attr("stop-color", lastColor);
-
-		// sets the legendBar dimensions
-		var barWidth = width / 40,
-		barHeight = height - (height / 3);
-
-		// returns a float representation of the number of races
-		var getRaceNumber = d3.scale.linear().domain([50, barHeight + 50])
-			.range(domain);
-
-		// displays a tip div with the number of races coupled to the legendBar
-		var tip = d3.tip().html(function() {
-		 	return "<span>Races: " + Math.round(getRaceNumber(d3.event.offsetY)) + "</span>";
+			tip.show();
+			borderChange(map, getLegendValue);
 		})
-		.offset(function() { return [d3.event.offsetY - 39, 0]; })
-		.attr('class', 'd3-tip');
-
-		// call the tooltip
-		map.svg.call(tip);
-
-		// draw the rectangle and fill with gradient
-		map.svg.append("rect")
-			.attr("width", barWidth)
-			.attr("height", barHeight)
-			.attr('x', width + barWidth)
-			.attr('y', barHeight / 4)
-			.style("fill", "url(#linear-gradient)")
-			.on('mousemove', function() {
-
-				tip.show();
-				borderChange(countries, getRaceNumber);
-			})
-			.on('mouseout', tip.hide);
-	};
+		.on('mouseout', tip.hide);
 };
 
 function showHideMarkers(markers, paths, moveAll, map) {
 
 	// show circle functionality
-	var radio0 = d3.select('#radio0');
-	var radio1 = d3.select('#radio1');
-
-	var circles = markers.circles;
-	var radius = markers.radius;
+	var radio0 = d3.select('#radio0'),
+		radio1 = d3.select('#radio1');
 
 	// groups circle transitions
-	var t  = circles.transition().duration(1000);
+	var duration = 1000,
+		t  = markers.circles.transition().duration(duration);
+		d = markers.circles.transition().delay(duration);
 
 	// show all circuit circles with radio button
 	radio0.on('change', function() {
-		circles.transition(t).attr('r', radius);
+		markers.circles
+			.transition(t)
+				.attr('r', markers.radius)
+				.style('display', null);
 	});
 
 	// hide all circuit circles with radio button
 	radio1.on('change', function() {
-		circles.transition(t).attr('r', 0);
+		markers.circles
+			.transition(t)
+				.attr('r', 0)
+			.transition(d)
+				.style('display', 'none');
 	});
 
 	// centers on path on click and moves circles
@@ -270,43 +282,55 @@ function showHideMarkers(markers, paths, moveAll, map) {
 		if (radio1.property('checked')) {
 
 			// selects the circle based on the country id in class
-			circles.filter('.' + d.id)
+			markers.circles.filter('.' + d.id)
 				.transition(t)
-				.attr('r', radius);
+					.attr('r', markers.radius)
+					.style('display', null);
 
 			// selects previous selection
-			map.svg.selectAll('circle[r = "' + radius + '"]').transition(t)
-				.attr('r', 0);
+			map.svg.selectAll('circle[r = "' + markers.radius + '"]')
+				.transition(t)
+					.attr('r', 0)
+				.transition(d)
+					.style('display', 'none');
 		};
 	});
 };
 
 /*
-* Uses the map legend as input and accesses the 
+* TODO: fix bug with border width
 */
-function borderChange(paths, getRaceNumber) {
+function borderChange(map, getLegendValue) {
 
 	// get value from legendBar
-	var value = Math.round(getRaceNumber(d3.event.offsetY));
+	var value = Math.round(getLegendValue(d3.event.offsetY));
 
-	// loop over all paths
-	paths[0].forEach(function(d) {
+	// selects data stored in paths
+	var countryData = map.options.data;
 
-		var path = d3.select(d);
+	// TODO: have list of all countries with 0 or more races ready
+	// TODO: some isos do not exist check gen function
+	var countryIso = Object.keys(map.options.data);
 
-		// JSONifies data-info attribute of path and gets value
-		if (path.attr('data-info') && JSON.parse(path.attr('data-info')).races == value) {
+	countryIso.forEach(function(iso) {
 
+		var path = map.svg.select('.datamaps-subunit.' + iso);
+
+		// console.log(path[0].length);
+		if (value == countryData[iso].races) {
+
+			// change the selected country
 			path.transition()
 				.duration(250)
-				.style('stroke-width', 2);
+				.style('stroke-width', 3);
 		}
 		else if (path.style('stroke-width') != 0.25) {
 
+			// change other selection back
 			path.transition()
 				.delay(250)
 				.style('stroke-width', 0.25);
-		};
+		}
 	});
 };
 
@@ -316,13 +340,22 @@ function borderChange(paths, getRaceNumber) {
 */
 function mapDataBuilder(season, color, data) {
 
-	mapData = {},
-	isos = Object.keys(data[season]);
+	// select the dataset for the selected season via the slider
+	var isoData = data[season],
+		mapData = {};
+
+	// get all isos
+	// TODO: isoData always contains all isos which will host at least 1 race
+	var isos = Object.keys(isoData);
 
 	isos.forEach(function(iso) {
+		var value = isoData[iso];
+
+		console.log(iso);
+
 		mapData[iso] = {
-			fillColor: color(data[season][iso]),
-			races: data[season][iso]
+			fillColor: color(value),
+			races: value
 		}
 	});
 	return mapData;
@@ -344,17 +377,14 @@ function gradientBuilder(defaultFill, fromColor, toColor, step, domain, defaultF
 
 	// sets the 'value: color' combination not following the linear scale
 	var colorDomain = [defaultFillValue],
-	colorRange = [defaultFill];
+		colorRange = [defaultFill];
 
-	// builds the linear scale for the rest of the values
 	for (var i = 0; i < stop; i += step) {
 
 		// offsets colors and values by 1 step size
 		colorDomain.push(i + 2 * step);
 		colorRange.push(linearColor(i + step));
 	};
-
-	// returns the semi gradient function
 	return d3.scale.threshold().domain(colorDomain).range(colorRange);
 };
 
@@ -368,9 +398,11 @@ function drawMarkers(data, map) {
 
 	map.bubbles(data, {
 		popupTemplate: function (geo, data) {
-			return ['<div class="hoverinfo"' + data.circuitId + '>',
-			'<br/>' + data.circuit_name + '',
-			'</div>'].join('');
+			return [
+				'<div class="hoverinfo"' + data.circuitId + '>',
+				'<br/>' + data.circuit_name + '',
+				'</div>'
+				].join('');
 		},
 		fillOpacity: 0.8,
 		highlightFillOpacity: 1,

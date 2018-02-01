@@ -121,6 +121,8 @@
 .row .vis {
   background-color: blue; /*TODO: REMOVE*/
   height: 400px;
+  padding-right: 0;
+  padding-left: 0;
 }
 
 /*sets gutter between row*/
