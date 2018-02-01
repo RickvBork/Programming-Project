@@ -13,7 +13,7 @@
  ### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.2.3 Functions
  
 ```javascript
-gradientBuilder();
+function gradientBuilder() {};
 ```
 This functions builds a semi linear color scale. The colors are coupled to an int, the smallest value is given a non linear color. Any color after that is scaled according to a linear scale. This scale is used in **mapDataBuilder();** to build an object wich is recognised by datamaps and can be used in the dataMaps method **updateChoropleth();** to update the map colors. These colors now correspond to int values on the map. This method is coupled to a user controlled slider.
 
