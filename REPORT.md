@@ -26,7 +26,11 @@ Moreover, this color scale can easily be altered for any kind of int data, makin
 ```javascript
 function drawMarkers() {};
 ```
+This function draws the markers on the map. A strange 'feature' of dataMaps is that the radius parameter must be passed to the map.bubbles() dataMaps method, but the radius of the markers must also be initialised with a d3 selection. This is some extra work, but the d3 marker selection is needed later anyways for zooming and translating the bubbles across the map.
 
+The function also adds an on click to the markers, used to draw and update the line graph.
+
+The function returns the marker selection and also the radius for later use to reduce redundent d3 selections. The selection is used by **zoom();** and **center();** to correctly reposition the markers after the user pans, zooms or centers the map on a country.
 
  # Challenges & changes
  (defend changes and decisions)
