@@ -204,6 +204,8 @@ Done today:
   * slideUpdateMap();
   * buildLegend();
   * showHideMarkers();
+* Coupled legendBar and tooltip
+  * Legend now fully scalable for later updates and changes
 * Fixed fill issue with bootstrap rows
   * Page section (visualizations) width now 100% of screen width
 * Found bug
