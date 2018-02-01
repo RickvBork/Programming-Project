@@ -210,3 +210,4 @@ Done today:
   * Page section (visualizations) width now 100% of screen width
 * Found bug
   * Not all circuits are drawn (e.g. Red Bull Ring) Check races generating data
+  * map.options.data does not have correct dataMaps iso values
