@@ -32,6 +32,11 @@ The function also adds an on click to the markers, used to draw and update the l
 
 The function returns the marker selection and also the radius for later use to reduce redundent d3 selections. The selection is used by **zoom();** and **center();** to correctly reposition the markers after the user pans, zooms or centers the map on a country.
 
+```javascript
+function showHideMarkers() {};
+```
+Groups logic for showing and hiding markers. The display styles are used to make markers non clickable, as making the r attribute equal to 0 still enabled an on click and the mouseover tooltip. Transitions and delays are grouped for ease of use and updating the function. The delay ensures proper animation on hide.
+
  # Challenges & changes
  (defend changes and decisions)
  
