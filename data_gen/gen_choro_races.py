@@ -1,16 +1,10 @@
-'''
-Make GET request for data
-'''
-
-# Creates data used for the DataMaps Choropleth
-
-# import library
+# imports libraries
 import helpers as hlp
 import json
 from collections import Counter as count
 import os
 
-def gen_total_races():
+def gen_choro_races():
 
 	# move back one directory
 	os.chdir("../data")
@@ -25,19 +19,14 @@ def gen_total_races():
 
 		# get json data for this season and round
 		URL = 'http://ergast.com/api/f1/' + str(season) + '/circuits.json'
-		data = hlp.get_data(URL)['MRData']
-
-		# get circuits raced in the season
-		circuits = data['CircuitTable']['Circuits']
+		circuits = hlp.get_data(URL)['CircuitTable']['Circuits']
+		lookup_iso = hlp.get_iso()
 
 		# loop over circuits
 		for circuit in circuits:
 
-			# check if country is in DataMaps
-			country = hlp.check_country(circuit['Location']['country'])
-
-			# translate to DataMaps iso
-			iso = hlp.country_iso(country)
+			# translates to DataMaps iso
+			iso = lookup_iso[circuit['Location']['country']]
 
 			try:
 				# get amount of races raced in the country
@@ -52,15 +41,18 @@ def gen_total_races():
 	seasons = country_data.keys()
 	isos = total_races.keys()
 
+	# loops over seasons
 	for season in seasons:
 		for iso in isos:
-			print(season, iso)
+
+			# if a country is not in data fill races with value 0
 			if not iso in country_data[season]:
-				print(season, iso)
 				country_data[season][iso] = 0
+
+	print(country_data)
 
 	with open('choro_races.json', 'w') as outfile:
 		json.dump(country_data, outfile)
 
 if __name__ == "__main__":
-	gen_total_races()
+	gen_choro_races()

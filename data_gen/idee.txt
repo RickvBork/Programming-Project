@@ -1,0 +1,4 @@
+Loop over seasons (Ergast)
+Loop over circuits per season (Ergast)
+
+Use CSV to link circuitIds to countries to build the choro_data

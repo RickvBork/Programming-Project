@@ -18,17 +18,19 @@ def gen_winners():
 	test = []
 	winners = {}
 
+	i = 0
+
 	# loop over seasons
 	for season in range(1950, 2018):
+
+		i += 1
+		print(i)
 
 		season = str(season)
 
 		# get json data for winning constructors and drivers
 		URL = 'http://ergast.com/api/f1/' + season + '/results/1.json'
-		data = hlp.get_data(URL)['MRData']
-
-		# get circuits raced in the season
-		races = data['RaceTable']['Races']
+		races = hlp.get_data(URL)['RaceTable']['Races']
 
 		constructors = []
 		constructor_wins = []

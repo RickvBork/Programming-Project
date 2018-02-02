@@ -8,10 +8,10 @@ window.onload = function() {
 	var relDataPath = '../data/';
 
 	d3.queue()
-		.defer(d3.json, relDataPath + 'circuit_races.json')
-		.defer(d3.json, relDataPath + 'choro_races.json')
+		.defer(d3.json, relDataPath + 'laptimes.json')
+		.defer(d3.json, relDataPath + 'choro.json')
 		.defer(d3.json, relDataPath + 'winners.json')
-		.defer(d3.json, relDataPath + 'test1.json')
+		.defer(d3.json, relDataPath + 'markers.json')
 		.await(mainFunction);
 };
 
@@ -28,7 +28,6 @@ function mainFunction(error, race_data, choroData, winners_data, markerData) {
 	winners = winners_data;
 
 	drawMap(markerData, choroData);
-	drawLineAxes();
 };
 
 /*
@@ -90,6 +89,7 @@ function drawMap(data, choro) {
 
 			// draws and returns circle markers
 			var markers = drawMarkers(data, map);
+			drawLineAxes(markers.circles);
 
 			var zoom = d3.behavior.zoom()
 				.translate(map.projection.translate())
@@ -127,6 +127,11 @@ function drawMap(data, choro) {
 			* Given path data, calculates the center of the path and moves map * to the new center location. Updates both paths and circles.
 			*/
 			function center(d) {
+
+				// console.log(d.id);
+
+				// var test = map.svg.selectAll('.datamaps-bubble.' + d.id);
+				// console.log(test);
 
 				var centroid = path.centroid(d),
 					translate = map.projection.translate();
@@ -316,7 +321,6 @@ function borderChange(map, getLegendValue) {
 
 		var path = map.svg.select('.datamaps-subunit.' + iso);
 
-		// console.log(path[0].length);
 		if (value == countryData[iso].races) {
 
 			// change the selected country
@@ -423,8 +427,8 @@ function drawMarkers(data, map) {
 			var circuitId = bubble.circuitId;
 
 			// select new data for line graph
-			var newData = races[circuitId]['data'];
-			
+			var newData = races[circuitId];
+
 			// force into season into date objects
 			forceValue(newData);
 			updateLineGraph(newData, circuitId);
@@ -440,7 +444,7 @@ function drawMarkers(data, map) {
 /*
 * Draws empty axes to be filled with data.
 */
-function drawLineAxes() {
+function drawLineAxes(circles) {
 
 	// gets graph variables
 	var graph = updateDict.graph,
@@ -493,6 +497,10 @@ function drawLineAxes() {
 		.attr('class', 'overlay')
 		.attr('width', graph.width)
 		.attr('height', graph.height);
+
+	// circles.on('click', function(d) {
+	// 	console.log(d);
+	// });
 };
 
 function updateLineGraph(newData, circuitId) {
@@ -510,8 +518,6 @@ function updateLineGraph(newData, circuitId) {
 
 	// Select the section we want to apply our changes to
 	var svg = d3.select("#lineGraph").transition();
-
-	console.log(newData);
 
 	// update x-axis
 	svg.select('.y.axis')
@@ -598,13 +604,15 @@ function updateLineGraph(newData, circuitId) {
 			// TODO find better way differentiate between the update and draw
 			if (d3.select('#pieChart').select('g').empty() == true) {
 
+				console.log(data)
+
 				// builds the pie chart
-				makePieChart(data);
+				makePieChart(data['constructor']);
 			}
 			else {
 
 				// TODO update pie chart here
-				updatePie(data);
+				updatePie(data['constructor']);
 			}
 		});
 
@@ -803,6 +811,8 @@ function buildUpdate() {
 * interpreted Date as an integer and added a comma delimiter.
 */
 function forceValue(data) {
+
+	console.log(data);
 
 	data.forEach(function(d) {
 		d.season = new Date(d.season);

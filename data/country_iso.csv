@@ -1,0 +1,36 @@
+# Groups the Ergast API country names and the dataMaps country names together
+# Grouped countries: Bahrain & Saudi Arabia, Singapore & Malaysia, Monaco & France
+#
+# F1 hosting countries,dataMaps iso
+Australia,AUS
+Morocco,MAR
+UK,GBR
+USA,USA
+Sweden,SWE
+Germany,DEU
+Bahrain,SAU
+Azerbaijan,AZE
+Portugal,PRT
+Switzerland,CHE
+India,IND
+Spain,ESP
+France,FRA
+Japan,JPN
+Argentina,ARG
+South Africa,ZAF
+Hungary,HUN
+Italy,ITA
+Brazil,BRA
+Turkey,TUR
+Singapore,MYS
+Monaco,FRA
+Canada,CAN
+Belgium,BEL
+Austria,AUT
+Mexico,MEX
+Malaysia,MYS
+China,CHN
+Russia,RUS
+UAE,ARE
+Korea,KOR
+Netherlands,NLD
