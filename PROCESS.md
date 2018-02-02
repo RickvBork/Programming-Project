@@ -227,4 +227,12 @@ Done today:
 * Overhauled request.py
   * Border bug removed
 * request.py now groups most data generation
-  * format choro needed to reduce amount of requests (less work)
+* test.py now handles data generation
+  * amount of GET requests reduced from 142 to 1
+  * Reason for this is because the current request should not be possible according to the maker of the API so I didn't try
+  * Doing so drastically improves time to request and format all data
+  
+TODO:
+* Finish pie chart and line graph code
+* Layout
+* Find and fix bugs
