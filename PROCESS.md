@@ -224,5 +224,7 @@ TODO:
 ## Day 15
 
 Done today:
-* Overhauled request.py and generate_choro_races.py
+* Overhauled request.py
   * Border bug removed
+* request.py now groups most data generation
+  * format choro needed to reduce amount of requests (less work)
