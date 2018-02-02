@@ -220,3 +220,9 @@ TODO:
 * Factor out other functions
 * Make linechart and update one function (for ease of use and scaling)
 * Make piechart and update one function (for ease of use and scaling)
+
+## Day 15
+
+Done today:
+* Overhauled request.py and generate_choro_races.py
+  * Border bug removed
