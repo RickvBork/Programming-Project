@@ -236,3 +236,9 @@ TODO:
 * Finish pie chart and line graph code
 * Layout
 * Find and fix bugs
+
+## Day 16
+
+Done today:
+* Cleaned up code in line graph generator
+  * No update dict needed anymore
