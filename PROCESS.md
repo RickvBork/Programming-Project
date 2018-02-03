@@ -242,3 +242,4 @@ TODO:
 Done today:
 * Cleaned up code in line graph generator
   * No update dict needed anymore
+  * yAxis ticks now correctly display minutes:seconds of average laptimes
