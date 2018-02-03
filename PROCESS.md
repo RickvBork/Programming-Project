@@ -243,3 +243,12 @@ Done today:
 * Cleaned up code in line graph generator
   * No update dict needed anymore
   * yAxis ticks now correctly display minutes:seconds of average laptimes
+* Cleaned up code in pie chart generator
+  * partly fixed color bug in pie chart generator
+* Found new bug
+  * Colors of slices not consistent with labels
+
+TODO:
+* Finish layout
+* Find and fix bugs
+* Final code cleanup and checks
