@@ -247,6 +247,8 @@ Done today:
   * partly fixed color bug in pie chart generator
 * Found new bug
   * Colors of slices not consistent with labels
+  * Colors are dependent on the order of the 'winners' in the list
+    * Fix by building the dict up with changes per season in mind
 
 TODO:
 * Finish layout
