@@ -254,3 +254,22 @@ TODO:
 * Finish layout
 * Find and fix bugs
 * Final code cleanup and checks
+
+## Day 17
+
+Done today:
+* Cleaned up pie chart generator
+* Partly fixed color bug in pie chart
+  * Colors are now consistent with winners
+  * Now there are not enough colors for each winner
+* Fixed consistency bug in pie chart generator
+  * Fixed by adding all winners and setting values to 0
+* Started on the rule tables
+  * Made dataset
+  * Engine rules implemented
+
+TODO:
+* FInish layout
+* Find and fix bugs
+  * Try to find a better pie chart solution
+* Final code cleanup
