@@ -268,6 +268,12 @@ Done today:
   * Made dataset
   * Engine rules implemented
 
+### Engine table after selecting the 2017 season on the line graph (blue yellow & red div colors are for debugging)
+<img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/currentTable0.jpg" width="430">
+
+### And after selecting the 2012 season
+<img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/currentTable1.jpg" width="430">
+
 TODO:
 * FInish layout
 * Find and fix bugs
