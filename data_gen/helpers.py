@@ -3,6 +3,7 @@ import sys
 import csv
 import os
 from collections import Counter as count
+from operator import itemgetter
 
 def get_data(URL):
 	'''
@@ -18,40 +19,6 @@ def get_data(URL):
 	except requests.exceptions.RequestException as e:
 		print(e)
 		sys.exit(1)
-
-def check_country(country):
-	'''
-	Changes origin of countries not included in DataMaps
-	'''
-
-	if country == 'Bahrain':
-		country = 'UAE'
-	elif country == 'Singapore':
-		country = 'Malaysia'
-	elif country == 'Korea':
-		country = 'South Korea'
-	elif country == 'Monaco':
-		country = 'France'
-
-	return country
-
-def format_choro(data_list):
-	'''
-	Takes a list and formats the country names to DataMaps standard
-	'''
-
-	country_names = {'Sweden': 'SWE', 'China': 'CHN', 'United Arab Emirates': 'URE', 'Hungary': 'HUN', 'Austria': 'AUT','Italy': 'ITA','Spain': 'ESP','Portugal': 'PRT', 'Russia': 'RUS', 'Switzerland': 'CHE', 'Germany': 'DEU', 'Australia': 'AUS', 'Malaysia': 'MYS', 'Canada': 'CAN', 'India': 'IND', 'South Korea': 'KOR', 'Belgium': 'BEL', 'Netherlands': 'NLD', 'France': 'FRA', 'Japan': 'JPN', 'UK': 'GBR', 'South Africa': 'ZAF', 'Morocco': 'MAR', 'Azerbaijan': 'AZE', 'Brazil': 'BRA', 'Argentina': 'ARG', 'France': 'FRA', 'Mexico': 'MEX', 'Turkey': 'TUR', 'USA': 'USA', 'UAE': 'UAE'}
-
-	# generates a list of list with country codes coupled to amount of tracks in country
-	data_list = [[country_names[country], data_list.count(country)] for country in set(data_list)]
-
-	return data_list
-
-def country_iso(data):
-
-	country_names = {'Sweden': 'SWE', 'China': 'CHN', 'United Arab Emirates': 'URE', 'Hungary': 'HUN', 'Austria': 'AUT','Italy': 'ITA','Spain': 'ESP','Portugal': 'PRT', 'Russia': 'RUS', 'Switzerland': 'CHE', 'Germany': 'DEU', 'Australia': 'AUS', 'Malaysia': 'MYS', 'Canada': 'CAN', 'India': 'IND', 'South Korea': 'KOR', 'Belgium': 'BEL', 'Netherlands': 'NLD', 'France': 'FRA', 'Japan': 'JPN', 'UK': 'GBR', 'South Africa': 'ZAF', 'Morocco': 'MAR', 'Azerbaijan': 'AZE', 'Brazil': 'BRA', 'Argentina': 'ARG', 'France': 'FRA', 'Mexico': 'MEX', 'Turkey': 'TUR', 'USA': 'USA', 'UAE': 'UAE'}
-
-	return country_names[data]
 
 def pre_choro_data(isos, first_season, last_season):
 	'''
@@ -118,13 +85,16 @@ def get_race_dict(laptime_data, race, circuitId):
 
 	laptime_data[circuitId].append(list_item)
 
-def add_winner(winners_data, race):
+def add_winner(winners_data, winners_list, race):
 	'''
 	Adds a winner to a list. Format so results can be scaled to more than just constructor data.
 	'''
 
 	season = race['season']
 	winner = race['Results'][0]['Constructor']['name']
+
+	if winner not in winners_list:
+		winners_list.append(winner)
 
 	try:
 		winners_data[season]['constructor'].append(winner)
@@ -133,7 +103,7 @@ def add_winner(winners_data, race):
 		winners_data[season]['constructor'] = []
 		winners_data[season]['constructor'].append(winner)
 
-def format_winners(winners_data, first_season, last_season):
+def format_winners(winners_data, winners_list, first_season, last_season):
 	'''
 	Uses a winner list to generate a pie chart acceptable data set.
 	'''
@@ -144,13 +114,27 @@ def format_winners(winners_data, first_season, last_season):
 		season = str(season)
 
 		# make unique winners key amount of wins
-		wins = dict(count(winners_data[season]['constructor']))
-		for k,v in wins.items():
-			temp.append({'label': k, 'value': v})
+		seasonal_wins = dict(count(winners_data[season]['constructor']))
 
-		winners_data[season]['constructor'] = temp
+		# append seasonal winners
+		seasonal_winners = []
+		for winner, wins in seasonal_wins.items():
+			seasonal_winners.append(winner)
+			temp.append({'label': winner, 'value': wins})
+
+		# append non seasonal winners with value = 0
+		for winner in winners_list:
+			if winner not in seasonal_winners:
+				temp.append({'label': winner, 'value': 0})
+
+		# sort the temp list alphabetically
+		sorted_list = sorted(temp, key=lambda k: k['label'])
+		winners_data[season]['constructor'] = sorted_list
 
 def check(circuits, circuitId):
+	'''
+	Checks if a track is unique.
+	'''
 
 	try:
 		if circuits[circuitId]:
@@ -185,3 +169,30 @@ def get_iso():
 					isos.append(iso)
 
 		return country_iso_dict, isos
+
+def get_rules(first_season, last_season):
+
+	# moves back one directory into data folder and sets the csv file name
+	os.chdir("../data")
+	file_name = 'rules.csv'
+	rules = {}
+
+	# opens the csv file and generates iterable rows
+	with open(file_name) as csvfile:
+		rows = csv.reader(csvfile)
+
+		# remove season from headers
+		row1 = next(rows)
+		rules = {}
+		for row in rows:
+
+			seasonal_rules = {}
+			for i in range(len(row1) - 1):
+
+				# build the rule dict without season header
+				seasonal_rules[row1[i + 1]] = row[i + 1]
+
+			# couples rules to the right season
+			rules[row[0]] = seasonal_rules
+
+		return rules

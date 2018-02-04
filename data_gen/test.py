@@ -13,6 +13,7 @@ def main():
 
 	# sets containers for data handling
 	winners_data = {}
+	winners_list = []
 	choro_data = {}
 	laptime_data = {}
 	marker_data = []
@@ -27,6 +28,9 @@ def main():
 
 	# fill pre choro_data set with empty values for every season
 	choro_data = hlp.pre_choro_data(isos, first_season, last_season)
+
+	# fill rules_data with rule changes on key seasons
+	rules_data = hlp.get_rules(first_season, last_season)
 
 	# sets the max amount of races (check Ergast for current ints)
 	max_races = '979'
@@ -58,13 +62,13 @@ def main():
 
 		hlp.get_race_dict(laptime_data, race, circuitId)
 
-		hlp.add_winner(winners_data, race)
+		hlp.add_winner(winners_data, winners_list, race)
 
 	# formats the choro data into dataMaps acceptable format
 	hlp.format_choro(choro_data, first_season, last_season)
 
 	# formats the winners data into d3 pie chart acceptable format
-	hlp.format_winners(winners_data, first_season, last_season)
+	hlp.format_winners(winners_data, winners_list, first_season, last_season)
 
 	# TESTED!
 	with open('choro.json', 'w') as outfile:
@@ -81,6 +85,10 @@ def main():
 	# TESTED!
 	with open('winners.json', 'w') as outfile:
 		json.dump(winners_data, outfile)
+
+	# TESTED!
+	with open('rules.json', 'w') as outfile:
+		json.dump(rules_data, outfile)
 
 if __name__ == "__main__":
 	main()
