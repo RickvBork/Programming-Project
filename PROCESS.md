@@ -288,6 +288,7 @@ Done today:
 * Code cleanup
 * Increased rule table information
 * Updated titles of visualizations
+* Improved line chart update animation
 
 ### Current site before an update
 <img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/beforeUpdate.jpg" width="800">
