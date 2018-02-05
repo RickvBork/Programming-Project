@@ -290,6 +290,7 @@ Done today:
 * Updated titles of visualizations
 
 TODO:
+* Add hover info on pie chart
 * FInish layout
 * Find and fix bugs
   * Try to find a better pie chart solution
