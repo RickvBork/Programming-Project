@@ -516,9 +516,11 @@ function buildLineChart(laptimes, winners, rules, markers) {
 
 	// handels the update
 	markers.circles.on('click', function(d) {
+
 		var circuitLaptimes = laptimes[d.circuitId];
-		forceValue(circuitLaptimes)
+		forceValue(circuitLaptimes);
 		updateLineGraph(circuitLaptimes);
+		updateTitle('circuit', d.circuit_name);
 	});
 
 	function updateLineGraph(laptimes) {
@@ -627,9 +629,17 @@ function buildLineChart(laptimes, winners, rules, markers) {
 				var season = timeParse(d0.season);
 				buildPieChart(winners, laptimes, rules, overlay, xScale, season);
 				changeRules(rules, season);
+				updateTitle('season0', season + ' F1 World Championship');
 			});
 	};
 
+};
+
+/*
+* General update function for title html elements.
+*/
+function updateTitle(className, text) {
+	d3.selectAll('.' + className).html(text);
 };
 
 /*
@@ -722,6 +732,7 @@ function buildPieChart(winners, laptimes, rules, overlay, xScale, season) {
 
 		updatePie(data);
 		changeRules(rules, season);
+		updateTitle('season0', season + ' F1 World Championship');
 	});
 
 	function updatePie(data) {
@@ -759,42 +770,58 @@ function changeRules(rules, season, bisector) {
 		i = d3.bisector(function(d) { return d }).left(seasons, season) - 1;
 
 	// TODO: remove debug
-	console.log('previous season in data: ' + seasons[i]);
-
+	console.log('Selected season: ' + season); // TODO remove
 	var data;
 
 	// checks if rules changed in this season
 	if (rules[season]) {
 		data = rules[season];
 	}
-
-	// goes back to previous rule changes if selected season had none
 	else {
-		data = rules[seasons[i]]
+		season = seasons[i];	// TODO: remove debug
+		console.log('No data, go back to season: ' + season);	// TODO remove debug
+
+		data = rules[seasons[i]];
 	};
 
 	// loops over keys in rule change dict
 	Object.keys(data).forEach(function(key) {
 
-		if (data[key]) {
+		console.log('Current Key: ' + key);	// TODO remove
+		console.log('Current Season: ' + season); // TODO remove
 
-			// TODO: remove debug
-			console.log('found data for ' + season + ': ' + data[key]);
-			d3.select('.' + key).html(data[key]);
+		// selects table row and text to be added to the row (if any)
+		var table = d3.select('.' + key),
+			text = data[key];
+
+		if (text) {
+
+			console.log('found data for ' + season + ': ' + text); // TODO remove
+			table.html(text);
+
+			if (key == 'innovations') {
+				d3.selectAll('.season').html(season);
+			};
 		}
 		else {
-
+			console.log('No data, go through seasons'); // TODO remove
 			// reset back to original index for new key: text element
-			var j = i;
+			var j = i,
+				text = rules[seasons[j]][key];
 
-			// while string is empty
-			while (!rules[seasons[j]][key]) {
+			// while key string is empty for previous seasons reduces season
+			while (!text) {
+				console.log('No data for: ' + seasons[j]);	// TODO remove
 				j--;
-
-				// TODO: remove debug
-				console.log('key: ' + key + ', empty', 'for index: ' + j, 'season of: ' + seasons[j]);
+				text = rules[seasons[j]][key];
 			};
-			d3.select('.' + key).html(rules[seasons[j]][key]);
+			// TODO remove debug
+			console.log('Found data for: ' + seasons[j] + '. Data: ' + text);
+			table.html(text);
+
+			if (key == 'innovations') {
+				d3.selectAll('.season').html(seasons[j]);
+			};
 		};
 	});
 };

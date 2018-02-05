@@ -2,13 +2,13 @@
 
 <html lang='eng'>
 	<head>
-		<meta name = 'Author: Rick van Bork' Content =  'project html'>
+		<meta name = 'Author: Rick van Bork' Content = 'project html'>
 
 		<!-- Required meta tags for Bootstrap -->
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-		<title>Github Pages RickvBork</title>
+		<title>F1 Project Rick van Bork</title>
 
 		<!-- Bootstrap core CSS -->
 		<link rel='stylesheet' type = 'text/css' href='bootstrap.min.css'>
@@ -75,7 +75,8 @@
 				<ul>
 				  <li>Interactive map with clickable circuit markers</li>
 				  <li>Interactive line graph, showing average laptimes throughout the years for a selected circuit</li>
-				  <li>A pie chart showing team dominance</li>
+				  <li>A pie chart showing team dominance for the selected season</li>
+				  <li>A table showing the dominant rules of the selected season</li>
 				</ul>
 			  </div>
 			</div>
@@ -88,7 +89,9 @@
 
 			  <div id='mapcolumn' class="vis col-md-12">
 			  	<div class='map options'>
-			  	  <div class='options title'>Options</div>
+			  	  <div class='options title'>
+			  	  	<h2>Options</h2>
+			  	  </div>
 			  	  <div class='options edge'>
 			  	  	<h5>Show circuits</h5>
 					<div class="lead form-check">
@@ -113,11 +116,10 @@
 			  	</div>
 			  	<div class='map functions'>
 			  	  <div class='map title'>
-			  	  	<span>F1 circuits</span>
-			  	  	<span><br>Races per country in: 1950</span>
+			  	  	<h2>F1 circuit map (1950-2017)</h2>
 			  	  </div>
 			  	  <div id='map-slide-container'>
-			  	    <div id='container' class='map edge' style='width: 500px; height: 300px;'></div>
+			  	    <div id='container' class='map edge' style='width: 600px; height: 350px;'></div>
 			  	    <div class="slidecontainer">
 					  <input type="range" min="1950" max="2017" value="1950" class="slider" id="myRange"></input>
 					</div>
@@ -128,29 +130,50 @@
 			<div id='row1' class="row">
 			  <div class="vis col-md-8">
 			  	<div id='graph-container'>
-			  		<div class='graph title b'>
-			  		  <span>Average</span>
-			  		  <span> laptimes:</span>
-			  		  <span> Circuit</span>
+			  		<div class='graph title'>
+			  		  <h2>Average laptimes</h2>
+			  		  <p class='circuit'></p>
 			  		</div>
 			  		<svg id='lineGraph' width='400' height='250'></svg>
 			  		<div class='info tables'>
 			  		  <table class='engine'>
 						  <tr>
 						  	<th>Engine</th>
-						    <th>Size</th>
+						    <th>Allowance</th>
 						  </tr>
 						  <tr>
 						    <td>Naturally aspirated</td>
-						    <td class='nas'>1.5L</td>
+						    <td class='nas'></td>
 						  </tr>
 						  <tr>
 						    <td>Compressed</td>
-						    <td class='coms'>3.0L</td>
+						    <td class='coms'></td>
 						  </tr>
 						  <tr>
 						    <td>Cylinder layout</td>
-						    <td class='cyl'>No limit</td>
+						    <td class='cyl'></td>
+						  </tr>
+						  <tr>
+						    <td>Fuel per GP</td>
+						    <td class='fuel'></td>
+						  </tr>
+					  </table>
+					  <table class='chassis'>
+						  <tr>
+						  	<th>Chassis</th>
+						    <th>Allowance</th>
+						  </tr>
+						  <tr>
+						    <td>Weight</td>
+						    <td class='weight'></td>
+						  </tr>
+					  </table>
+					  <table class='teamInnovations'>
+						  <tr>
+						  	<th>Latest innovations <span class='season'></span></th>
+						  </tr>
+						  <tr>
+							<td class='innovations'></td>
 						  </tr>
 					  </table>
 			  		</div>
@@ -158,9 +181,9 @@
 			  </div>
 			  <div class="vis col-md-3">
 			  	<div class='pie contructors'>
-			  		<div class='pie title b'>
-			  		  <span>Winning constructors</span>
-			  		  <span><br>year</span>
+			  		<div class='pie title'>
+			  		  <h2>Constructors wins</h2>
+			  		  <p class='season0'></p>
 			  		</div>
 			  		<svg id='pieChart' width='250' height='250'></svg>
 			  	</div>
