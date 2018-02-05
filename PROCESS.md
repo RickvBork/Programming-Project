@@ -279,3 +279,18 @@ TODO:
 * Find and fix bugs
   * Try to find a better pie chart solution
 * Final code cleanup
+
+## Day 18
+
+Done today:
+* Better implemented scroll nav
+* Polished and minimized layout
+* Code cleanup
+* Increased rule table information
+* Updated titles of visualizations
+
+TODO:
+* FInish layout
+* Find and fix bugs
+  * Try to find a better pie chart solution
+* Final code cleanup
