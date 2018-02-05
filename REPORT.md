@@ -49,6 +49,12 @@ function updateTitle() {};
 
 Updates title html elements after the user selects a circuit from the map, or a season from the line graph. The class is passed as a string, as is the text the title is to be updated with. The class is used to select the correct element(s) and the text is used to update the element's html.
 
+```javascript
+function buildLineChart() {};
+```
+
+Groups and handles all logic for building and updating the line chart. The update function is defined in this function to reduce the amount of variables that need to be passed.
+
 # Challenges & changes
  
 ## Table update and data structure
@@ -56,7 +62,11 @@ A challenge was finding a logical way to update a table to the most recent rules
 1. Find a simple way to fill a data object with mostly the same data for all seasons
 2. Find a way to revert back to the most recent change of a rule subset (like the engine size or fuel limit)
 
-As the information is not readily available and has to be filled in by hand in excel, the choice was to go for the second option. This saves time updating the information and decreases the amount of duplicate info in the rules dataset. The trade-off is that more work has to be done at the back end to find the most recent ruleset. This is implemented by mostly filling the dataset with empty strings, and bisecting a list of all seasons where the rules have changed. If the user selected a season where the rules have not changed, the bisected index is used to find the most recent season where the rules have changed. The rules are keys and the text are the values, key by key a check is made is the text value is not empty. If it is, the index is decreased to an even earlier season where the rules have changed unil the most recent rulechange for the key is found.
+As the information is not readily available and has to be filled in by hand in excel, the choice was to go for the second option. This saves time updating the information and decreases the amount of duplicate info in the rules dataset. The trade-off is that more work has to be done at the back end to find the most recent ruleset. 
+
+This is implemented by mostly filling the dataset with empty strings, and bisecting a list of all seasons where the rules have changed. If the user selected a season where the rules have not changed, the bisected index is used to find the most recent season where the rules have changed. The rules are keys and the text are the values, key by key a check is made is the text value is not empty. If it is, the index is decreased to an even earlier season where the rules have changed unil the most recent rulechange for the key is found.
 
 ## Pie chart update
-Another challenge was the pie chart update. It turns out the slices are not, locked, to each label. If an update is made, the order of the labels in the dataset and the order of the slices determine which slice gets which data value. This means if the first slice represents Ferrari, and Mercedes is in the 0th index of the new dataset, the Ferrari slice updates with the mercedes win amount. The ideal update would of be to exit the Ferrari slice and enter the mercedes slice. However, due to time constraints and other important focus points, a simple fix was chosen. The dataset now includes all possible winners in alphabetical order (total of 44) at all times. Win values are 0 if slices need to be 'exited'. This creates consistency in the pie chart update, but is not ideal as there should be no need to keep empty datasets around.
+Another challenge was the pie chart update. It turns out the slices are not, locked, to each label. If an update is made, the order of the labels in the dataset and the order of the slices determine which slice gets which data value. This means if the first slice represents Ferrari, and Mercedes is in the 0th index of the new dataset, the Ferrari slice updates with the mercedes win amount. The ideal update would of be to exit the Ferrari slice and enter the mercedes slice. 
+
+However, due to time constraints and other important focus points, a simple fix was chosen. The dataset now includes all possible winners in alphabetical order (total of 44) at all times. Win values are 0 if slices need to be 'exited'. This creates consistency in the pie chart update, but is not ideal as there should be no need to keep empty datasets around.
