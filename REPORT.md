@@ -96,19 +96,19 @@ Style document containing padding. Used in combination with scrolling-nav.js to 
 Groups all dependencies for F1.js. Includes the following libraries:
 
 **1. d3**
-Data Driven Documents. Popular library used for creating data dependend visualizations and animations in JavaScript.
+  * Data Driven Documents. Popular library used for creating data dependend visualizations and animations in JavaScript.
 
 **2. d3-queue**
-Used for loading datasets asynchonously.
+  * Used for loading datasets asynchonously.
 
 **3. d3-tip**
-Used for creating tooltips for specific user actions.
+  * Used for creating tooltips for specific user actions.
 
 **4. d3-interpolate-path**
-Offers a better interpolation method than the standard interpiolation method delivered with d3. Used for updating the line graph.
+  * Offers a better interpolation method than the standard interpiolation method delivered with d3. Used for updating the line graph.
 
 **5 dataMaps**
-Built on top of d3 to generate easy to use data maps. Used to generate the F1 circuit map.
+  * Built on top of d3 to generate easy to use data maps. Used to generate the F1 circuit map.
 
  ### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.2.3 Functions
  
