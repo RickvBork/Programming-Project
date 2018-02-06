@@ -97,18 +97,39 @@ Groups all dependencies for F1.js. Includes the following libraries:
 
 **1. d3**
   * Data Driven Documents. Popular library used for creating data dependend visualizations and animations in JavaScript.
+  * Link: https://github.com/d3/d3
 
 **2. d3-queue**
   * Used for loading datasets asynchonously.
+  * Link: https://github.com/d3/d3-queue
 
 **3. d3-tip**
   * Used for creating tooltips for specific user actions.
+  * https://github.com/Caged/d3-tip
 
 **4. d3-interpolate-path**
   * Offers a better interpolation method than the standard interpiolation method delivered with d3. Used for updating the line graph.
+  * Link: https://github.com/pbeshai/d3-interpolate-path
 
 **5 dataMaps**
   * Built on top of d3 to generate easy to use data maps. Used to generate the F1 circuit map.
+  * Link: http://datamaps.github.io/
+  
+**6. topojson**
+  * Built on top of GeoJSON and encodes topology used by dataMaps. Used to generate a world map and country borders.
+  * Link: https://github.com/topojson/topojson/wiki
+  
+**7. bootstrap**
+  * Popular library for front-end layouts and styiling of the site.
+  * Link: https://github.com/twbs/bootstrap
+
+**8. jquery**
+  * Popular library for DOM traversal, interaction and event handling. Bootstrap dependency.
+  * Link: https://github.com/jquery/jquery
+
+**9. jquery easing**
+  * Built on top of jquery, used for easy animations of DOM elements. Used by scrolling-nav.js to ease scroll animation
+  * Link: https://github.com/gdsmith/jquery.easing
 
  ### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.2.3 Functions
  
