@@ -213,7 +213,7 @@ Called from the **buildLegend();** function.
 Using an integer value and all country isos which will host at least one GP, it selects all countries where the race amount is equal to the integer value. Then it increases the border thickness, otherwhise border thickness is reset.
 
 ```javascript
-function updateLineGraph() {};
+function buildLineChart() {};
 ```
 Called from an anonymous function within the done* parameter of the dataMap in the **drawMap();** function to ensure the markers have been drawn.
 
@@ -221,12 +221,36 @@ First it draws empty axes by processing empty time and date domains with empty t
 
 These include:
 1. The two focus lines
-  * An x-line
-  * A y-line
+    * An x-line
+    * A y-line
 2. The focus circle
 3. The focus overlay
 
 These are grouped in a <g> element which is hidden with a, display: none, style. The result are two empty axes, signalling to the user that these can be filled with data after an input. The empty elements are created to be updates easily later with the **updateLineGraph();** function.
+ 
+The markers are used to update the (first empty) line graph with laptime data from a circuit after a click event. The marker has a circuitId, which keys laptimes in laptimes.json. Using the id, the correct laptimes are fetched and formatted using the **forceValue();** function. The formatted laptime data for the selected circuit is then used in the **updateLineGraph();** function. The title of the line graph is updated using the marker circuit_name, which is nicer to read than the id. This name is passed to the **updateTitle();** function.
+
+```javascript
+function forceValue() {};
+```
+Called from the marker on click event in the **buildLineChart();**.
+
+It forces simple year strings, like "2017", into a JavaScript date objects e.g. *Thu Jan 01 1970 00:00:00 GMT+0100*. This object format is better suited for d3 axes, as the years can be displayed easily without displaying delimiter signs, e.g. 2,017. The same is true for the laptime info. The date object does have to be formatted back to a user readable format. The **timeParse();** function transforms the date object back into a simple string.
+
+The year is not important, so laptime info, which is stored in milliseconds in laptimes.json, is formatted directly as a date. This results in a 1970 date object, e.g. *Thu Jan 01 1970 **%M:%S:%L** GMT+0100*. The minutes, seconds and milliseconds can be fetched using the **d3.time.format("%M:%S:%L");** method, which converts the date object into a string, e.g. **"01:23:456"**. 
+
+```javascript
+function updateLineGraph() {};
+```
+Called from the marker on click event in the **buildLineChart();**.
+
+Handles the line chart updates to reflect changes in circuit selection by the user via the map. Instead of empty domains, circuit specific information, which is passed via the marker on click event in the **buildLineChart();** function, is used to update the domains. The domains are then used to re-scale the axes.
+
+The line is updated via tween interpolation, using the previous line to smoothly transition to the next line. Stock d3 interpolation does not handle changes in data length and missing data smoothly, so the d3-interpolate-path library is used to handle the interpolation.
+
+The overlay is given new display styles every update, these hide and show focus elements on mouse in and out events. This is some extra work, but has some features that simplify the script. Mainly, this layout does not require a check if the overlay has been updaten before. On mouse move, the mouse x-coordinate is passed to the **getTrueData();** function, which returns the laptime data indexed at the season the user has selected with the mouse's x-position. Using this data, the x and y coordinates of each season and laptime of that season can be calculated. These are then used to draw the y- and x-focus lines. These focus-lines cross the line of the line graph exactly at the value of each laptime for each season.
+
+This allows an on click and update to be added to the graph overlay element, instead of the line graph circles. The user can now more easily select a season, as he/she does not have to click on a small circle for a selection, but can click anywhere on the line graph.
 
 ```javascript
 function getTrueData() {};
