@@ -78,9 +78,18 @@ HTML markup file. Loads in all relevant libraries, stylesheets, scripts and crea
 Standard bootstrap scrolling nav scipt, handles screen scrolling to sections of the site. If the user selects a nav option from the nav-bar on the top of the page, the screen is smoothly scrolled to the relevant section.
 
 ---
-
----
 #### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; css folder
+---
+
+#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bootstrap.min.css
+Style document for general layout of the differenct site sections and the site nav-bar.
+
+#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; project.css
+Style document for general layout of the visualizations, titles and any non data relevant colors on the site, e.g. background colors of countries of which no data exists.
+
+#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; scrolling-nav.css
+Style document containing padding. Used in combination with scrolling-nav.js to correctly fit sections after auto scrolling from nav-bar.
+
 ---
 
  ### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.2.3 Functions
