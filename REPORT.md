@@ -57,9 +57,7 @@ Logic for performing a GET request to the Ergast API and for selecting and forma
 Helper functions for selecting and formatting data into seperate datasets.
 
 ---
-<br/>
-<br/>
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; main folder
+<br/><br/>#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; main folder
 ---
 #### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.1 F1.js
 Logic for the visualizations. Handles vizualization of seperate data sets, most importantly:
