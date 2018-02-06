@@ -1,7 +1,3 @@
-'''
-Make GET request for data
-'''
-
 # import library
 import helpers as hlp
 import requests
@@ -15,78 +11,84 @@ def main():
 	# move back one directory and go to data folder
 	os.chdir("../data")
 
+	# sets containers for data handling
 	winners_data = {}
+	winners_list = []
 	choro_data = {}
 	laptime_data = {}
 	marker_data = []
+	circuits = {}
 
-	countries = []
+	# sets iso lookup dict and all countries with one or more races
+	lookup_iso, isos = hlp.get_iso()
 
-	# sets years data will be collected for
+	# sets years pre_choro data will be collected for
 	first_season = 1950
 	last_season = 2017
-
-	# sets the max amount of circuits and races (check Ergast for current ints)
-	max_circuit_amount = '73'
-	max_race_amount = '67'
-
-	# URL link to JSON data of all circuit locations (73 unique circuits)
-	URL = 'http://ergast.com/api/f1/circuits.json?limit=' + max_circuit_amount
-	circuits = hlp.get_data(URL)['CircuitTable']['Circuits']
-	lookup_iso, isos = hlp.get_iso()
 
 	# fill pre choro_data set with empty values for every season
 	choro_data = hlp.pre_choro_data(isos, first_season, last_season)
 
-	# Loops over all F1 circuits
-	for circuit in circuits:
+	# fill rules_data with rule changes on key seasons
+	rules_data = hlp.get_rules(first_season, last_season)
 
+	# sets the max amount of races (check Ergast for current ints)
+	max_races = '979'
+
+	# URL link to JSON data of all circuit locations (73 unique circuits)
+	URL = 'http://ergast.com/api/f1/results/1.json?limit=' + max_races
+	races = hlp.get_data(URL)['RaceTable']['Races']
+
+	# loop over races (with at least one race, port_imperial not included)
+	for race in races:
+
+		circuit = race['Circuit']
 		circuitId = circuit['circuitId']
-		country = circuit['Location']['country']
-		iso = lookup_iso[country]
 
-		# make list of data needed for map markers
-		hlp.add_marker(marker_data, circuit, lookup_iso)
+		# gets dataMaps iso value of an Ergast API country
+		iso = lookup_iso[circuit['Location']['country']]
 
-		# queries for data of every race winner on this circuit
-		URL = 'http://ergast.com/api/f1/circuits/' + circuitId + '/results/1.json?limit=' + max_race_amount
-		races = hlp.get_data(URL)['RaceTable']['Races']
+		# build choro data
+		choro_data[race['season']][iso] += 1
 
-		# start an empty laptimes list for the circuit
-		laptime_data[circuitId] = []
+		# checks for unique circuits
+		if hlp.check(circuits, circuitId):
 
-		# loop over race data for the current circuit
-		for race in races:
+			# make list of data needed for map markers
+			hlp.get_marker_dict(marker_data, circuit, lookup_iso)
 
-			season = race['season']
+			# starts new laptime list
+			laptime_data[circuitId] = []
 
-			results = race['Results'][0]
+		hlp.get_race_dict(laptime_data, race, circuitId)
 
-			# build choro data
-			choro_data[season][iso] += 1
-
-			# appends a dict to the laptimes list for a circuit
-			hlp.get_race_dict(laptime_data, race, circuitId)
-
-			# for later scraping of fastest laps
-			# s_round = race['round']
+		hlp.add_winner(winners_data, winners_list, race)
 
 	# formats the choro data into dataMaps acceptable format
 	hlp.format_choro(choro_data, first_season, last_season)
-	# hlp.format_winners(winners_data, first_season, last_season)
 
-	files = ['laptimes', 'markers', 'choro']
+	# formats the winners data into d3 pie chart acceptable format
+	hlp.format_winners(winners_data, winners_list, first_season, last_season)
 
-	# # circuitId keying races held on it
-	# with open('laptimes.json', 'w') as outfile:
-	# 	json.dump(laptime_data, outfile)
+	# TESTED!
+	with open('choro.json', 'w') as outfile:
+		json.dump(choro_data, outfile)
 
-	# # list of dicts of circuitIds keying location data
-	# with open('markers.json', 'w') as outfile:
-	# 	json.dump(marker_data, outfile)
+	# TESTED!
+	with open('markers.json', 'w') as outfile:
+		json.dump(marker_data, outfile)
 
-	# with open('choro.json', 'w') as outfile:
-	# 	json.dump(choro_data, outfile)
+	# TESTED!
+	with open('laptimes.json', 'w') as outfile:
+		json.dump(laptime_data, outfile)
+
+	# TESTED!
+	with open('winners.json', 'w') as outfile:
+		json.dump(winners_data, outfile)
+
+	# TESTED!
+	with open('rules.json', 'w') as outfile:
+		json.dump(rules_data, outfile)
 
 if __name__ == "__main__":
 	main()

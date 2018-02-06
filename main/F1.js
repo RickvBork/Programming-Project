@@ -21,9 +21,7 @@ function mainFunction(error, laptimes, choro, winners, markers, rules) {
 
 	if (error) throw error;
 
-	// set global data
-	circuits = markers;
-	races = laptimes;
+	// TODO add error handling
 
 	drawMap(markers, choro, laptimes, winners, rules);
 };
@@ -87,6 +85,8 @@ function drawMap(data, choro, laptimes, winners, rules) {
 
 			// draws and returns circle markers
 			var markers = drawMarkers(data, map);
+
+			// builds an interim line graph
 			buildLineChart(laptimes, winners, rules, markers);
 
 			var zoom = d3.behavior.zoom()
@@ -155,19 +155,26 @@ function drawMap(data, choro, laptimes, winners, rules) {
 						return map.projection([d.longitude, d.latitude])[1]
 					});
 			};
-			var moveAll = center;
 
+			// adds marker show/hide functionality
+			var moveAll = center;
 			showHideMarkers(markers, paths, moveAll, map);
+
+			// adds slide update functionality to the map
 			slideUpdateMap(map, choro, color, slider);
-			buildLegend(map, width, height, margin, firstColor, lastColor, domain);
 		}
 	});
+
+	// builds the legend of the map
+	buildLegend(map, width, height, margin, firstColor, lastColor, domain);
 };
 
 /*
 * Uses slider input to update the map colors.
 */
 function slideUpdateMap(map, choro, color, slider) {
+
+	// TODO: initiate tip?
 
 	slider.on('input', function() {
 
@@ -217,10 +224,13 @@ function buildLegend(map, width, height, margin, firstColor, lastColor, domain, 
 	var getLegendValue = d3.scale.linear().domain([barStart, barEnd])
 		.range(domain);
 
+	// fill with value from on mousemove function.
+	var value;
+
 	// displays a tip div with the number of races coupled to the legendBar
 	var tip = d3.tip().html(function() {
 
-	 	return "<span>Races: " + Math.round(getLegendValue(d3.event.offsetY)) + "</span>";
+	 	return "<span>Races: " + value + "</span>";
 	})
 	.offset(function() {
 		return [d3.event.offsetY - barStart + 10, 0]; 
@@ -242,8 +252,9 @@ function buildLegend(map, width, height, margin, firstColor, lastColor, domain, 
 		.style("fill", "url(#linear-gradient)")
 		.on('mousemove', function() {
 
+			value = Math.round(getLegendValue(d3.event.offsetY));
 			tip.show();
-			borderChange(map, getLegendValue);
+			borderChange(map, value);
 		})
 		.on('mouseout', tip.hide);
 };
@@ -303,16 +314,12 @@ function showHideMarkers(markers, paths, moveAll, map) {
 /*
 * TODO: fix bug with border width
 */
-function borderChange(map, getLegendValue) {
-
-	// get value from legendBar
-	var value = Math.round(getLegendValue(d3.event.offsetY));
+function borderChange(map, value) {
 
 	// selects data stored in paths
 	var countryData = map.options.data;
 
 	// TODO: have list of all countries with 0 or more races ready
-	// TODO: some isos do not exist check gen function
 	var countryIso = Object.keys(map.options.data);
 
 	countryIso.forEach(function(iso) {
@@ -437,8 +444,8 @@ function buildLineChart(laptimes, winners, rules, markers) {
 	console.log('buildLineChart', rules);
 
 	// mock domain to be updated by data
-	var dateDomain = [0, 0],
-		timeDomain = [0, 0];
+	var xDomain = [0, 0],
+		yDomain = [0, 0];
 
 	// sets margins
 	var svg = d3.select("#lineGraph"),
@@ -447,8 +454,8 @@ function buildLineChart(laptimes, winners, rules, markers) {
 		height =+ svg.attr("height") - margin.top - margin.bottom;
 
 	// sets scales
-	var xScale = d3.time.scale().range([0, width]).domain(dateDomain),
-		yScale = d3.time.scale().range([height, 0]).domain(timeDomain);
+	var xScale = d3.time.scale().range([0, width]).domain(xDomain),
+		yScale = d3.time.scale().range([height, 0]).domain(yDomain);
 
 	// appends lines container
 	var g = svg.append("g")
@@ -490,31 +497,31 @@ function buildLineChart(laptimes, winners, rules, markers) {
 		.attr('class', 'focus')
 		.style('display', 'none');
 
-	// append the X-axis crosshair line
+	// appends the X-axis crosshair line
 	mousePoint.append('line')
 		.attr('id', 'focusLineX')
 		.attr('class', 'focusLine')
 		.style('stroke-dasharray', ('8, 2'));
 	
-	// append the Y-axis crosshair line
+	// appends the Y-axis crosshair line
 	mousePoint.append('line')
 		.attr('id', 'focusLineY')
 		.attr('class', 'focusLine')
 		.style('stroke-dasharray', ('8, 2'));
 	
-	// append the tracking circle
+	// appends the tracking circle
 	mousePoint.append('circle')
 		.attr('id', 'focusCircle')
 		.attr('r', markers.radius)
 		.attr('class', 'focusCircle');
 
-	// append the overlay class
+	// appends the overlay class
 	g.append('rect')
 		.attr('class', 'overlay')
 		.attr('width', width)
 		.attr('height', height);
 
-	// handels the update
+	// handles the update
 	markers.circles.on('click', function(d) {
 
 		var circuitLaptimes = laptimes[d.circuitId];
@@ -528,9 +535,9 @@ function buildLineChart(laptimes, winners, rules, markers) {
 		console.log('DO: updateLineGraph', '\nData: ');
 		console.log(winners);
 
-		// sets domains
-		var xDomain = d3.extent(laptimes, function(d) { return d.season; })
-		var yDomain = d3.extent(laptimes, function(d) { return d.time; });
+		// updates domains
+		xDomain = d3.extent(laptimes, function(d) { return d.season; })
+		yDomain = d3.extent(laptimes, function(d) { return d.time; });
 
 		// sets axes
 		xAxis.scale(xScale.domain(xDomain))
@@ -539,7 +546,7 @@ function buildLineChart(laptimes, winners, rules, markers) {
 			.tickFormat(d3.time.format("%M:%S"));
 
 		// sets semi grouped transition
-		var svg = d3.select("#lineGraph").transition();
+		svg = d3.select("#lineGraph").transition();
 
 		// update y-axis
 		svg.select('.y.axis')
@@ -554,45 +561,46 @@ function buildLineChart(laptimes, winners, rules, markers) {
 			.attr("dx", "-.5em")
 			.attr("dy", ".5em")
 			.attr("transform", "rotate(-45)")
-			.style("text-anchor", "end");;
+			.style("text-anchor", "end");
 
-		// update line with difference interpolation
-		svg.select('.line')
-			.duration(750)
+		// updates line with tween interpolation
+		svg.select('.line').delay(150)
+			.duration(500)
 			.attrTween('d', function (d) {
 				var previous = d3.select(this).attr('d');
 				return d3.interpolatePath(previous, line(laptimes));
 			});
 
 		// TODO find out why selection requires g element
-		var lineCircles = d3.select('#lineGraphG').selectAll('.lineCircle')
+		lineCircles = d3.select('#lineGraphG').selectAll('.lineCircle')
 			.data(laptimes);
+
+		var t = lineCircles.transition().duration(250);
 
 		lineCircles.exit().transition()			// remove excess circles
 			.duration(250)
 			.attr('r', 0)
 			.remove();
 
-		lineCircles.enter().append("circle")	// append new circles
-			.attr('r', 0)
-			.attr('class', '.lineCircle');
+		lineCircles.enter().append("circle");	// append new circles
 
-		lineCircles.transition()	// first shift to correct locations
-			.duration(750)
+		// handles the circle animation
+		lineCircles
+			.transition().duration(250)		// slowly decrease radius
+				.attr('r', 0)	
+			.transition().delay(250)		// delay the immediate shift
 				.attr("cx", function(d) { return xScale(d.season); })
 				.attr("cy", function(d) { return yScale(d.time); })
-			.transition()		// then increase radius
-			.duration(250)
+			.transition().duration(250)		// slowly increase radius
 				.attr('r', 5)
 				.attr('class', 'lineCircle');
-
-		var mousePoint = d3.select('.focus');
 
 		// the current dict in the data list selected by the mouse
 		var d0;
 
-		// Update the focus elements
-		var overlay = d3.select("#lineGraph").selectAll('.overlay');
+		// selects focus elements
+		var overlay = d3.select("#lineGraph").selectAll('.overlay'),
+			mousePoint = d3.select('.focus');
 
 		overlay
 			.on('mouseover', function() { mousePoint.style('display', null); })
@@ -626,7 +634,7 @@ function buildLineChart(laptimes, winners, rules, markers) {
 			})
 			.on('click', function() { 
 
-				var season = timeParse(d0.season);
+				var season = timeParse(d0.season, '%Y');
 				buildPieChart(winners, laptimes, rules, overlay, xScale, season);
 				changeRules(rules, season);
 				updateTitle('season0', season + ' F1 World Championship');
@@ -727,7 +735,7 @@ function buildPieChart(winners, laptimes, rules, overlay, xScale, season) {
 		// get the season from the line chart click
 		var mouseX = d3.mouse(this)[0];
 		d0 = getTrueData(laptimes, xScale, mouseX);
-		var season = timeParse(d0.season);
+		var season = timeParse(d0.season, '%Y');
 			data = winners[season]['constructor'];
 
 		updatePie(data);
@@ -834,15 +842,17 @@ function changeRules(rules, season, bisector) {
 function forceValue(data) {
 
 	data.forEach(function(d) {
-		d.time = new Date(d.time)
+		d.time = new Date(d.time);
 		d.season = new Date(d.season);
 	});
 	return data;
 };
 
 /*
-* Takes a date object and returns the year.
+* Takes a date object and returns the year. The format string is a d3 
+* acceptable parse string. Link:
+* https://github.com/d3/d3-3.x-api-reference/blob/master/Time-Formatting.md
 */
-function timeParse(date) {
-	return d3.time.format("%Y")(date);
+function timeParse(dateObject, formatString) {
+	return d3.time.format(formatString)(dateObject);
 };
