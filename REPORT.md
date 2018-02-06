@@ -131,12 +131,26 @@ Groups all dependencies for F1.js. Includes the following libraries:
   * Built on top of jquery, used for easy animations of DOM elements. Used by scrolling-nav.js to ease scroll animation
   * Link: https://github.com/gdsmith/jquery.easing
 
- ### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.2.3 Functions
- 
+ ### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.2.3 Functions (F1.js)
+
+```javascript
+function drawmap() {};
+```
+This function initiates the map and all map functionality. It calls the following notable functions:
+1. gradientBuilder()
+2. mapDataBuilder()
+3. drawMarkers()
+4. buildLineChart()
+5. zoom()
+6. center()
+7. showHideMarkers()
+8. slideUpdateMap()
+9. buildLegend()
+
 ```javascript
 function gradientBuilder() {};
 ```
-This functions builds a semi linear color scale. The colors are coupled to an int, the smallest value is given a non linear color. Any color after that is scaled according to a linear scale. This scale is used in **mapDataBuilder();** to build an object wich is recognised by datamaps and can be used in the dataMaps method **updateChoropleth();** to update the map colors. These colors now correspond to int values on the map. This method is coupled to a user controlled slider.
+Called from **drawMap()**, this functions builds a semi linear color scale. The colors are coupled to an int, the smallest value is given a non linear color. Any color after that is scaled according to a linear scale. This scale is used in **mapDataBuilder();** to build an object wich is recognised by datamaps and can be used in the dataMaps method **updateChoropleth();** to update the map colors. These colors now correspond to int values on the map. This method is coupled to a user controlled slider.
 
 One drawback is that it takes more work to implement this kind of scale than a simple d3 linear scale. However, one advantage is that there is no need for an extra check in the **mapDataBuilder();** function to check for the smallest non linear value, and the color coupled to it. This check would need to be done on every update of the slider, while **gradientBuilder();** is only initialised once and passes the function to a different variable that can be called at will.
 
@@ -145,13 +159,37 @@ The color scale also bundels all value: color 'keys' in one function. This is mo
 Moreover, this color scale can easily be altered for any kind of int data, making the map more flexible for later updates and datasets. The predefined argument is already included for easy updates of scales.
 
 ```javascript
+function mapDataBuilder() {};
+```
+Called from **drawMap()** to init map colors of countries with an F1 GP in 1950. It is subsequently called from **slideUpdateMap()** to update the map colors after user input from the season slider. It builds a dictionary used by the **updatechoropleth()** method to color countries according to data values, a number of races in this case.
+
+```javascript
+function slideUpdateMap() {};
+```
+Called from an anonymous function within the done* parameter of the dataMap in the **drawMap()** function to ensure the map elements are ready for slide updates.
+
+It uses a slider input element to select a season. Calling **mapDataBuilder()** it builds a dictionary with color values and race values for the selected season. Used by the **updatechoropleth()** method to update the dataMaps country colors.
+
+```javascript
 function drawMarkers() {};
 ```
-This function draws the markers on the map. A strange 'feature' of dataMaps is that the radius parameter must be passed to the map.bubbles() dataMaps method, but the radius of the markers must also be initialised with a d3 selection. This is some extra work, but the d3 marker selection is needed later anyways for zooming and translating the bubbles across the map.
+Called from an anonymous function within the done* parameter of the dataMap in the **drawMap()** function to ensure the map bubbles method is ready. This function draws the markers on the map using the bubbles method and adds a popup displaying the circuit name.
 
-The function also adds an on click to the markers, used to draw and update the line graph.
+A strange 'feature' of dataMaps is that the radius parameter must be passed to the map.bubbles() dataMaps method, but the radius of the markers must also be initialised with a d3 selection. This is some extra work, but the d3 marker selection is needed later anyways for zooming and translating the bubbles across the map.
 
 The function returns the marker selection and also the radius for later use to reduce redundent d3 selections. The selection is used by **zoom();** and **center();** to correctly reposition the markers after the user pans, zooms or centers the map on a country.
+
+```javascript
+function zoom() {};
+```
+Called from an anonymous function within the done* parameter of the dataMap in the **drawMap()** function to ensure the projection method is ready.
+
+It ensures proper mouse click panning and scroll zooming on the map using the map projection.
+
+```javascript
+function center() {};
+```
+Called from the same place as **zoom()** for the same reason, it ensures proper mouse country click panning on the map. 
 
 ```javascript
 function showHideMarkers() {};
@@ -159,21 +197,32 @@ function showHideMarkers() {};
 Groups logic for showing and hiding markers. The display styles are used to make markers non clickable, as making the r attribute equal to 0 still enabled an on click and the mouseover tooltip. Transitions and delays are grouped for ease of use and updating the function. The delay ensures proper animation on hide.
 
 ```javascript
+function buildLegend() {};
+```
+Called from the **drawMap()** function.
+
+Builds a configurable legend bar for the dataMap. Adds mouse hover selection functionality. When hovering over the legend bar, the countries with the selected amount of races increase in thickness, until a new selection is made. The selection amount is displayed as a d3-tip, also initiated in the **buildLegend()** function.
+
+It calls the **borderChange()** function.
+
+```javascript
+function borderChange() {};
+```
+Uses the mouseY coordinate and a small translation function **getLegendValue()** to select the correct race amount from the legend bar. Then, using all country isos which will host at least one GP, it selects all countries where the race amount is equal to the user selected amount and increases the border thickness, otherwhise border thickness is reset.
+
+```javascript
 function getTrueData() {};
 ```
-
 When the user wants to select a season from the line chart, this is the function that handles it. First it uses the invert method of the xScale function. This means translating a mouse coordinate to a date string, essentially the reverse process of getting drawing x-axis ticks. Then it bisects this date string into the dataset, returning the index where the date should be stored if inserted into a date sorted data set. Using the index, the trailing and leading datasets are used to find the one closest to the mouse location.
 
 ```javascript
 function updateTitle() {};
 ```
-
 Updates title html elements after the user selects a circuit from the map, or a season from the line graph. The class is passed as a string, as is the text the title is to be updated with. The class is used to select the correct element(s) and the text is used to update the element's html.
 
 ```javascript
 function buildLineChart() {};
 ```
-
 Groups and handles all logic for building and updating the line chart. The update function is defined in this function to reduce the amount of variables that need to be passed.
 
 # Challenges & changes
