@@ -1,6 +1,6 @@
  # 1. Description of the F1 application
  
-The visualization is aimed at giving insight how rule changes, also called formulas, have an effect on team dominance. Consensus exists among F1 fans that team dominance rarely survives a significant rule change. This application empowers the user to find out wether this is true or not.
+The visualizations are aimed at giving insight how rule changes, also called formulas, have an effect on team dominance. Consensus exists among F1 fans that team dominance rarely survives a significant rule change. This application empowers the user to find out wether this is true or not.
  
  # 2. Technical design
  
