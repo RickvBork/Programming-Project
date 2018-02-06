@@ -55,6 +55,7 @@ Logic for performing a GET request to the Ergast API and for selecting and forma
 
 #### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; helpers.py
 Helper functions for selecting and formatting data into seperate datasets.
+
 ---
 #### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; main folder
 ---
@@ -75,6 +76,7 @@ HTML markup file. Loads in all relevant libraries, stylesheets, scripts and crea
 
 #### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; scrolling-nav.js
 Standard bootstrap scrolling nav scipt, handles screen scrolling to sections of the site. If the user selects a nav option from the nav-bar on the top of the page, the screen is smoothly scrolled to the relevant section.
+
 ---
 
 ---
