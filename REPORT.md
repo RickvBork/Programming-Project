@@ -4,23 +4,26 @@ The visualization is aimed at giving insight how rule changes, also called formu
  
  # 2. Technical design
  
- ## &nbsp;&nbsp; 2.1 High level overview
- 
- # Data structure
+## &nbsp;&nbsp; 2.1 High level overview
 
-# request.py
+#### 2.1.1 request.py
 Python handles the data structure which is used by JavaScript to generate visualizations.
 
-# F1.js
-JavaScript handles the actual initiations and updates of the visualizations. F1.js follows a linear flow, from map initiation to pie chart drawing and updating. After the data has been loaded in a queue, a main function is called. This main function handles all logic for drawing the map.
+#### 2.1.2 F1.js
+JavaScript handles the actual initiations and updates of the visualizations. F1.js follows a linear flow, from map initiation to pie chart drawing and updating. After the data has been loaded in a queue, a main function is called. This main function handles all logic for drawing the map. The rest of the visualizations are cascades from the map init function, and initialised and updated with on clicks of relevant elements of another visualization. The general flow of F1.js is as follows:
 
-The map is drawn using the **drawMap()** function, in here a colorscale is made for coloring of the countries with values from choro.json. The colors of all map states are defined as well as the thickness of all border states. Map markers are drawn and the selection and radius returned by the **drawMarkers()** function. Another marker relevant function, **showHideMarkers()** groups logic for showing and hiding the markers using radio buttons.
+1. Map init
+  * marker on click function defined
+    * init line graph
+2. Line graph init
+  * Line graph update function defined
+  * overlay on click function defined
+    * init pie chart
+3. Pie chart init
+  * pie chart update function defined
+    * overlay on click updated to update pie chart
 
-The **zoom()** and **center()** functions are defined after the map is done drawing for correctly displaying the markers after mouse drag panning, scroll zooming (zoom) and mouse country click panning (center).
-
-The legend of the map is initiated in a right reserved margin, and colored using the same colors of the choro color scale. A tooltip is also added on mousemove to show and select countries with specific values.
-
-The line chart is pre-built using **buildLineChart()**. Empty axis are show to give feedback to the user that a linechart can be drawn. Within the line graph update function is defined within buildLineChart(), **updateLineGraph()**.
+Functions relevant to each part, e.g. map color gradients and functions that get indices from the overlay of the line graph are explained in detail in **section 2.2.3**.
 
  ## &nbsp;&nbsp; 2.2 Low level overview
  
