@@ -15,15 +15,15 @@ JavaScript handles the actual initiations and updates of the visualizations. F1.
 1. Load DOM
 2. Load Data
 3. Map init
-  * marker on click function defined
-    * init line graph
+    * marker on click function defined
+      * init line graph
 4. Line graph init
-  * Line graph update function defined
-  * overlay on click function defined
-    * init pie chart
+    * Line graph update function defined
+    * overlay on click function defined
+      * init pie chart
 5. Pie chart init
-  * pie chart update function defined
-    * overlay on click updated to update pie chart
+    * pie chart update function defined
+      * overlay on click updated to update pie chart
 
 Functions relevant to each part, e.g. map color gradients and functions that get indices from the overlay of the line graph are explained in detail in **section 2.2.3**.
 
