@@ -12,14 +12,16 @@ Python handles the data structure which is used by JavaScript to generate visual
 #### 2.1.2 F1.js
 JavaScript handles the actual initiations and updates of the visualizations. F1.js follows a linear flow, from map initiation to pie chart drawing and updating. After the data has been loaded in a queue, a main function is called. This main function handles all logic for drawing the map. The rest of the visualizations are cascades from the map init function, and initialised and updated with on clicks of relevant elements of another visualization. The general flow of F1.js is as follows:
 
-1. Map init
+1. Load DOM
+2. Load Data
+3. Map init
   * marker on click function defined
     * init line graph
-2. Line graph init
+4. Line graph init
   * Line graph update function defined
   * overlay on click function defined
     * init pie chart
-3. Pie chart init
+5. Pie chart init
   * pie chart update function defined
     * overlay on click updated to update pie chart
 
