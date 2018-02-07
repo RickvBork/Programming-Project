@@ -20,7 +20,7 @@ The three elements respectively show:
 3. Team wins of a selected season
 */
 
-"use strict";
+'use strict';
 
 // loads the DOM and preloads data
 window.onload = function() {
@@ -30,11 +30,11 @@ window.onload = function() {
 
 	// gueues data
 	d3.queue()
-		.defer(d3.json, relDataPath + 'test2.json') // laptime data
-		.defer(d3.json, relDataPath + 'test0.json')  // choro data
-		.defer(d3.json, relDataPath + 'test3.json')	// winners data
-		.defer(d3.json, relDataPath + 'test1.json')	// markers data
-		.defer(d3.json, relDataPath + 'test4.json')  // rules data
+		.defer(d3.json, relDataPath + 'laptimes.json') // laptime data
+		.defer(d3.json, relDataPath + 'choro.json')  // choro data
+		.defer(d3.json, relDataPath + 'winners.json')	// winners data
+		.defer(d3.json, relDataPath + 'markers.json')	// markers data
+		.defer(d3.json, relDataPath + 'rules.json')  // rules data
 		.await(mainFunction);
 };
 
@@ -44,7 +44,7 @@ window.onload = function() {
 function mainFunction(error, laptimes, choro, winners, markers, rules) {
 
 	if (error) {
-		alert("An error has ocurred!\nPlease reload page.");
+		alert('An error has ocurred!\nPlease reload page.');
 		throw error;
 	};
 	drawMap(markers, choro, laptimes, winners, rules);
@@ -69,12 +69,12 @@ function drawMap(data, choro, laptimes, winners, rules) {
 	var container = d3.select('#container'),
 		margin = {top: 0, right: 100, bottom: 0, left: 0},
 		width =+ parseInt(container.style('width'), 10) - margin.left - margin.right,
-		height =+ parseInt(container.style("height"), 10) - margin.top - margin.bottom;
+		height =+ parseInt(container.style('height'), 10) - margin.top - margin.bottom;
 
 	// get the season on which the slider is initialised
 	var slider = d3.select('#myRange'),
 		INITSEASON = slider.attr('value'),
-		isos = Object.keys(choro["1950"]);
+		isos = Object.keys(choro['1950']);
 
 	// build a mapData dict to initialise map
 	var mapData = mapDataBuilder(INITSEASON, color, choro, isos);
@@ -118,7 +118,7 @@ function drawMap(data, choro, laptimes, winners, rules) {
 				.translate(map.projection.translate())
 				.scale(map.projection.scale())
 				.scaleExtent([50, 1000])
-				.on("zoom", zoom);
+				.on('zoom', zoom);
 
 			var path = d3.geo.path()
 				.projection(map.projection);
@@ -135,13 +135,13 @@ function drawMap(data, choro, laptimes, winners, rules) {
 			*/
 			function zoom() {
 				map.projection.translate(d3.event.translate).scale(d3.event.scale);
-				paths.attr("d", path);
+				paths.attr('d', path);
 
 				markers.circles
-					.attr("cx", function(d) { 
+					.attr('cx', function(d) { 
 						return map.projection([d.longitude ,d.latitude])[0]
 					})
-					.attr("cy", function(d) { 
+					.attr('cy', function(d) { 
 						return map.projection([d.longitude, d.latitude])[1]
 					});
 			};
@@ -150,11 +150,6 @@ function drawMap(data, choro, laptimes, winners, rules) {
 			* Given path data, calculates the center of the path and moves map * to the new center location. Updates both paths and circles.
 			*/
 			function center(d) {
-
-				// console.log(d.id);
-
-				// var test = map.svg.selectAll('.datamaps-bubble.' + d.id);
-				// console.log(test);
 
 				var centroid = path.centroid(d),
 					translate = map.projection.translate();
@@ -169,14 +164,14 @@ function drawMap(data, choro, laptimes, winners, rules) {
 
 				paths.transition()
 					.duration(1000)
-					.attr("d", path);
+					.attr('d', path);
 
 				markers.circles.transition()
 					.duration(890)
-					.attr("cx", function(d) { 
+					.attr('cx', function(d) { 
 						return map.projection([d.longitude ,d.latitude])[0]
 					})
-					.attr("cy", function(d) { 
+					.attr('cy', function(d) { 
 						return map.projection([d.longitude, d.latitude])[1]
 					});
 			};
@@ -205,6 +200,7 @@ function slideUpdateMap(map, choro, color, slider, isos) {
 		var season = this.value,
 			mapData = mapDataBuilder(season, color, choro, isos);
 		map.updateChoropleth(mapData);
+		updateTitle('season1', 'Races per country in ' + season);
 	});
 };
 
@@ -218,25 +214,25 @@ function buildLegend(map, width, height, margin, firstColor, lastColor, domain, 
 	map.svg.attr('width', width + margin.right);
 
 	// creates a definition element for legend
-	var defs = map.svg.append("defs");
+	var defs = map.svg.append('defs');
 
 	// sets vertical gradient from 0 to 100%, no horizontal gradient
-	var legendBar = defs.append("linearGradient")
-		.attr("id", "linear-gradient")
-		.attr("x1", "0%")
-		.attr("y1", "0%")
-		.attr("x2", "0%")
-		.attr("y2", "100%");
+	var legendBar = defs.append('linearGradient')
+		.attr('id', 'linear-gradient')
+		.attr('x1', '0%')
+		.attr('y1', '0%')
+		.attr('x2', '0%')
+		.attr('y2', '100%');
 
 	// sets the color for the start at 0% of the firstColor value
-	legendBar.append("stop") 
-		.attr("offset", "0%")   
-		.attr("stop-color", firstColor);
+	legendBar.append('stop') 
+		.attr('offset', '0%')   
+		.attr('stop-color', firstColor);
 
 	// sets the color for the end at 100% of the lastColor value
-	legendBar.append("stop") 
-		.attr("offset", "100%")   
-		.attr("stop-color", lastColor);
+	legendBar.append('stop') 
+		.attr('offset', '100%')   
+		.attr('stop-color', lastColor);
 
 	// sets the legendBar dimensions
 	var barHeight = pBar * height,
@@ -253,7 +249,7 @@ function buildLegend(map, width, height, margin, firstColor, lastColor, domain, 
 	// displays a tip div with the number of races coupled to the legendBar
 	var tip = d3.tip().html(function() {
 
-	 	return "<span>Races: " + value + "</span>";
+	 	return '<span>Races: ' + value + '</span>';
 	})
 	.offset(function() {
 		return [d3.event.offsetY - barStart + 10, 0]; 
@@ -267,12 +263,12 @@ function buildLegend(map, width, height, margin, firstColor, lastColor, domain, 
 	var countries = map.svg.selectAll('.datamaps-subunit');
 
 	// draw the rectangle and fill with gradient
-	map.svg.append("rect")
-		.attr("width", barWidth)
-		.attr("height", barHeight)
+	map.svg.append('rect')
+		.attr('width', barWidth)
+		.attr('height', barHeight)
 		.attr('x', width + barWidth)
 		.attr('y', barStart)
-		.style("fill", "url(#linear-gradient)")
+		.style('fill', 'url(#linear-gradient)')
 		.on('mousemove', function() {
 
 			value = Math.round(getLegendValue(d3.event.offsetY));
@@ -328,7 +324,7 @@ function showHideMarkers(markers, paths, moveAll, map) {
 					.style('display', null);
 
 			// selects previous selection
-			map.svg.selectAll('circle[r = "' + markers.radius + '"]')
+			map.svg.selectAll('circle[r ="' + markers.radius + '"]')
 				.transition(t)
 					.attr('r', 0)
 				.transition(d)
@@ -464,19 +460,19 @@ function buildLineChart(laptimes, winners, rules, markers) {
 		yDomain = [0, 0];
 
 	// sets margins
-	var svg = d3.select("#lineGraph"),
+	var svg = d3.select('#lineGraph'),
 		margin = {top: 20, right: 20, bottom: 50, left: 50},
-		width =+ svg.attr("width") - margin.left - margin.right,
-		height =+ svg.attr("height") - margin.top - margin.bottom;
+		width =+ svg.attr('width') - margin.left - margin.right,
+		height =+ svg.attr('height') - margin.top - margin.bottom;
 
 	// sets scales
 	var xScale = d3.time.scale().range([0, width]).domain(xDomain),
 		yScale = d3.time.scale().range([height, 0]).domain(yDomain);
 
 	// appends lines container
-	var g = svg.append("g")
+	var g = svg.append('g')
 		.attr('id', 'lineGraphG')
-		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 	// sets the line function
 	var line = d3.svg.line()
@@ -484,8 +480,8 @@ function buildLineChart(laptimes, winners, rules, markers) {
 		.y(function(d) { return yScale(d.time); });
 
 	// sets the x and y axes with empty ticks
-	var xAxis = d3.svg.axis().scale(xScale).orient('bottom').tickFormat(""), 
-		yAxis = d3.svg.axis().scale(yScale).orient('left').tickFormat("");
+	var xAxis = d3.svg.axis().scale(xScale).orient('bottom').tickFormat(''), 
+		yAxis = d3.svg.axis().scale(yScale).orient('left').tickFormat('');
 
 	// appends the x axis
 	g.append('g')
@@ -496,20 +492,17 @@ function buildLineChart(laptimes, winners, rules, markers) {
 	// appends the y axis
 	g.append('g')
 		.attr('class', 'y axis')
-		.call(yAxis)
-		.append('text')
-			.attr('transform', 'rotate(-90)')
-			.attr('y', 6)
-			.attr('dy', '.71em')
-			.attr('text-anchor', 'end')
-			.text('Laptimes');
+		.call(yAxis);
 
 	// creates line container on graph
 	g.append('path')
 		.attr('class', 'line');
 
 	// creates a focus element
-	createFocus(g, width, height, markers.radius);
+	var focus = createFocus(g, width, height, markers.radius);
+
+var overlay = focus.overlay,
+	mousePoint = focus.mousePoint;
 
 	// handles the update
 	markers.circles.on('click', function(d) {
@@ -532,12 +525,12 @@ function buildLineChart(laptimes, winners, rules, markers) {
 
 		// sets axes
 		xAxis.scale(xScale.domain(xDomain))
-			.tickFormat(d3.time.format("%Y"));
+			.tickFormat(d3.time.format('%Y'));
 		yAxis.scale(yScale.domain(yDomain))
-			.tickFormat(d3.time.format("%M:%S"));
+			.tickFormat(d3.time.format('%M:%S'));
 
 		// sets semi grouped transition
-		svg = d3.select("#lineGraph").transition();
+		svg = d3.select('#lineGraph').transition();
 
 		// update y-axis
 		svg.select('.y.axis')
@@ -549,10 +542,10 @@ function buildLineChart(laptimes, winners, rules, markers) {
 			.duration(750)
 			.call(xAxis)
 			.selectAll('text')
-			.attr("dx", "-.5em")
-			.attr("dy", ".5em")
-			.attr("transform", "rotate(-45)")
-			.style("text-anchor", "end");
+			.attr('dx', '-.5em')
+			.attr('dy', '.5em')
+			.attr('transform', 'rotate(-45)')
+			.style('text-anchor', 'end');
 
 		// updates line with tween interpolation
 		svg.select('.line').delay(150)
@@ -570,25 +563,21 @@ function buildLineChart(laptimes, winners, rules, markers) {
 			.attr('r', 0)
 			.remove();
 
-		lineCircles.enter().append("circle");	// append new circles
+		lineCircles.enter().append('circle');	// append new circles
 
 		// handles the circle animation
 		lineCircles
 			.transition().duration(250)		// slowly decrease radius
 				.attr('r', 0)	
 			.transition().delay(250)		// delay the immediate shift
-				.attr("cx", function(d) { return xScale(d.season); })
-				.attr("cy", function(d) { return yScale(d.time); })
+				.attr('cx', function(d) { return xScale(d.season); })
+				.attr('cy', function(d) { return yScale(d.time); })
 			.transition().duration(250)		// slowly increase radius
 				.attr('r', 5)
 				.attr('class', 'lineCircle');
 
 		// stores the current dict in the data list selected by the mouse
 		var d0, season;
-
-		// selects focus elements
-		var overlay = d3.select("#lineGraph").selectAll('.overlay'),
-			mousePoint = d3.select('.focus');
 
 		overlay
 			.on('mouseover', function() { mousePoint.style('display', null); })
@@ -629,7 +618,7 @@ function buildLineChart(laptimes, winners, rules, markers) {
 					.attr('cy', y);
 			})
 			.on('click', function() { 
-
+				d3.select('#pieChart').selectAll('path').remove();
 				buildPieChart(winners, laptimes, rules, overlay, xScale, season);
 				changeRules(rules, season);
 				updateTitle('season0', season + ' F1 World Championship');
@@ -664,10 +653,15 @@ function createFocus(g, width, height, radius) {
 		.attr('class', 'focusCircle');
 
 	// appends the overlay class
-	g.append('rect')
+	var overlay = g.append('rect')
 		.attr('class', 'overlay')
 		.attr('width', width)
 		.attr('height', height);
+
+	return {
+		overlay: overlay, 
+		mousePoint: mousePoint
+	};
 };
 
 /*
@@ -708,9 +702,6 @@ function buildPieChart(winners, laptimes, rules, overlay, xScale, season) {
 	// init on constructor data for user selected season
 	var data = winners[season]['constructor'];
 
-	console.log('DO: makePieChart', '\nData: ');
-	console.log(data);
-
 	// sets dimensions
 	var width = 250,
 		height = 250,
@@ -725,9 +716,9 @@ function buildPieChart(winners, laptimes, rules, overlay, xScale, season) {
 		.value(function(d) { return d.value; })
 		.sort(null);
 
-	var svg = d3.select("#pieChart")
-		.append("g")
-		.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+	var svg = d3.select('#pieChart')
+		.append('g')
+		.attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
 	// sets beginning angles for all paths
 	var enterClockwise = {
@@ -736,12 +727,12 @@ function buildPieChart(winners, laptimes, rules, overlay, xScale, season) {
 	};
 
 	// enters paths
-	var path = svg.selectAll("path")
+	var path = svg.selectAll('path')
 		.data(pie(data))
-		.enter().append("path")
+		.enter().append('path')
 			.attr('class', function(d) { return (d.data.label).replace(/\s/g, '_'); })
-			.attr("fill", function(d, i) { return color(i); })
-			.attr("d", arc(enterClockwise))
+			.attr('fill', function(d, i) { return color(i); })
+			.attr('d', arc(enterClockwise))
 			.each(function(d) {
 
 				// stores angle values for later transition
@@ -756,12 +747,11 @@ function buildPieChart(winners, laptimes, rules, overlay, xScale, season) {
 	// uses stored values to update to the final pie chart
 	path.transition()
 		.duration(1000)
-		.attrTween("d", arcTween);
+		.attrTween('d', arcTween);
 
 	// sets the layout of the html text of the tooltip
 	var tip = d3.tip().html(function(d) {
-		console.log(d);
-	 	return "<span>Team: " + d.data.label + "</br>Wins: " + d.data.value + "</span>";
+	 	return '<span>Team: ' + d.data.label + '</br>Wins: ' + d.data.value + '</span>';
 	})
 	.attr('class', 'piechart tip');
 
@@ -795,7 +785,7 @@ function buildPieChart(winners, laptimes, rules, overlay, xScale, season) {
 		path = path.data(pie(data));
 
 		// redraws the arcs
-		path.transition().duration(750).attrTween("d", arcTween);
+		path.transition().duration(750).attrTween('d', arcTween);
 	};
 
 	/*

@@ -1,33 +1,33 @@
-season,coms,nas,cyl,fuel,weight,aero,extra,innovations
-1950,1.5L,4.5L,No Limit,No limit,No limit,No limit,First season of F1 championship,None
-1952,,2.0L,,,No limit,,,
-1954,0.75L,2.5L,,,No limit,,,
-1958,,,,,,,Alcohol-based fuels illegal,
-1961,Banned,1.3 - 1.5L,,,450kg,,,
-1966,1.5L,3.0L,,,500kg,,,
-1967,,,,,,Simple wings,First aero elements,
-1968,,,,,,,Unsprung aero,
-1970,0.5L,,,,530kg,,,
-1972,1.5L,,,,550kg,,,
-1973,,,,,575kg,,,
-1977,,,,,,Ground effects,"Turbo Engines (Renault RS01 turbo), Ground Effect (Lotus 78)","Turbo Engines (Renault RS01 turbo), Ground Effect (Lotus 78)"
-1981,,,,,585kg,,Carbon Fibre chassis (McLaren MP4-1),Carbon Fibre chassis (McLaren MP4-1)
-1982,,,,,580kg,,,
-1983,,,,,540kg,,Blown diffuser (RE40),Blown diffuser (RE40)
-1984,,,,220L,,,Refuelling banned,
-1986,,Banned,,195L,,,,
-1987,,3.5L,,195L (Turbo),500kg,,Active Suspension (Lotus 99T),Active Suspension (Lotus 99T)
-1988,,,,155L,,,,
-1989,Banned,,,No limit,,,Semi-automatic gearbox (Ferrari 640),Semi-automatic gearbox (Ferrari 640)
-1994,,,,,,Downforce reduced,Driver aids banned,
-1995,,3.0L,,,595kg,,,
-2004,,,,,605kg (Q) 600kg (Other),,Engine must last 1 weekend,
-2005,,,,,,,Engine must last 2 weekends,
-2006,,2.4L,V8,,,,,
-2009,,,,,,Downforce reduced,"Max 8 engines per season, Max 18000 rpm",
-2010,,,,,620kg,,,
-2011,,,,,640kg,F-ducts and double diffusers banned,,
-2012,,,,,,Diffuser engine map and blown diffuser banned,,
-2014,1.6L,Banned,V6T,100kg,691kg,,,
-2016,,,,,702kg,,,
-2017,,,,105kg,728kg,Downforce increased,,
+season,coms,nas,cyl,fuel,weight
+1950,1.5L,4.5L,No Limit,No limit,No limit
+1952,,2.0L,,,No limit
+1954,0.75L,2.5L,,,No limit
+1958,,,,,
+1961,Banned,1.3 - 1.5L,,,450kg
+1966,1.5L,3.0L,,,500kg
+1967,,,,,
+1968,,,,,
+1970,0.5L,,,,530kg
+1972,1.5L,,,,550kg
+1973,,,,,575kg
+1977,,,,,
+1981,,,,,585kg
+1982,,,,,580kg
+1983,,,,,540kg
+1984,,,,220L,
+1986,,Banned,,195L,
+1987,,3.5L,,195L (Turbo),500kg
+1988,,,,155L,
+1989,Banned,,,No limit,
+1994,,,,,
+1995,,3.0L,,,595kg
+2004,,,,,605kg (Q) 600kg (Other)
+2005,,,,,
+2006,,2.4L,V8,,
+2009,,,,,
+2010,,,,,620kg
+2011,,,,,640kg
+2012,,,,,
+2014,1.6L,Banned,V6T,100kg,691kg
+2016,,,,,702kg
+2017,,,,105kg,728kg

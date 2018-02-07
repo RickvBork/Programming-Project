@@ -25,15 +25,25 @@ website.
 	fill: none;
 }
 
+#piechart path {
+  stroke-width: 3;
+  stroke: #343a40;
+  fill-opacity: 0.7
+}
+
+#piechart path:hover {
+  fill-opacity: 1;
+}
+
 .line { 
-	stroke: grey;
-	stroke-width: 2;
+	stroke: #343a40;
+	stroke-width: 1px;
 	fill: none;
 }
 
 .lineCircle {
 	fill: white;
-	stroke: grey;
+  stroke: #343a40;
 	stroke-width: 3px;
 }
 
@@ -60,7 +70,7 @@ website.
 
 /* The slider itself */
 .slider {
-  -webkit-appearance: none;  /* Override default CSS styles */
+  -webkit-appearance: none; /* Override default CSS styles */
   appearance: none;
   width: 500px; /* Full-width */
   height: 10px; /* Specified height */
@@ -124,13 +134,12 @@ website.
   position: absolute;
   top: 50%;
   margin-top: -5px;
-  margin-right: -2px;  
+  margin-right: -2px; 
   right: 100%;
   z-index: 2; 
 }
 
 .row .vis {
-  background-color: blue; /*TODO: REMOVE*/
   height: 475px;
   padding-right: 0;
   padding-left: 0;
@@ -157,16 +166,14 @@ website.
   margin: auto;
   width: 600px;
   height: 100%;
-  background-color: red; /*TODO: REMOVE*/
 }
 
 /*formatting for map title*/
 .title {
   margin: 0 auto;
-  height: 50px;
+  height: 80px;
   text-align: center;
   font-size: 25px;
-  background-color: white;
 }
 
 .title p {
@@ -197,7 +204,6 @@ website.
 /*container for both slider and map container*/
 #map-slide-container {
   position: relative;
-  background-color: yellow; /*TODO: REMOVE*/
   height: 80%;
   bottom: 0px;
 }
@@ -224,17 +230,12 @@ website.
 /*container for map options*/
 .map.options {
   position: relative;
-
-  /*TODO: same as #map-slide-title-container*/
   height: 100%;
   float: right;
-  background-color: red; /*TODO: REMOVE*/
 }
 
-/* TODO: options same as #container*/
 .options.edge {
   height: 75%;
-  background: yellow; /*TODO: REMOVE*/
 }
 
 .form-check {
@@ -268,10 +269,8 @@ h5:after
 }
 
 #graph-container {
-  /*TODO: same as #map-slide-title-container*/
   height: 90%;
   width: 55%;
-  background-color: red; /*TODO: REMOVE*/
   margin-left: 20px;
 }
 
@@ -313,7 +312,6 @@ h5:after
   right: 0;
   height: 100%;
   width: 40%;
-  background-color: yellow;
 }
 
 /*set opacity and color to uneven table rows*/
@@ -349,7 +347,6 @@ tr th:nth-child(1) {
 .pie.contructors {
   width: 100%;
   height: 75%;
-  background-color: red;
 }
 
 /*centers pie chart in the container div*/

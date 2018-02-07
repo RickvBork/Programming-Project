@@ -86,7 +86,7 @@ def request():
 
 	# lists to loop over with jsonifyer
 	datasets = [choro_data, marker_data, laptime_data, winners_data, rules_data]
-	datanames = ['test0', 'test1', 'test2', 'test3', 'test4']
+	datanames = ['choro', 'markers', 'laptimes', 'winners', 'rules']
 
 	# writes files
 	i = 0
