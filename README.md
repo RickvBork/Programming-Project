@@ -3,7 +3,7 @@
 * Name:		Rick van Bork
 * Std. nr.	11990503
 
-link:\
+link (githup pages formatting is does not represent original browser testing):\
 https://rickvbork.github.io/Programming-Project/main/project.html
 
 Link Minor Programmeren application details (dutch):\
