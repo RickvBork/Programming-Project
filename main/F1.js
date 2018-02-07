@@ -1,3 +1,25 @@
+/*
+Author: Rick van Bork
+Std. nr.: 11990503
+
+Course: Programming Project
+
+The following script is the logic for an F1 oriented website with three interactive elements. The interactive elements are:
+1. A map with:
+  * Mouse click panning
+  * Click panning
+  * Scroll zooming
+  * Interactive markers which update a line chart
+2. A line chart with
+	* Interactive overlay elements which update a pie chart
+3. A pie chart
+
+The three elements respectively show:
+1. F1 circuit locations & per country race amounts throughout the years
+2. Laptimes per circuit throughout the years
+3. Team wins of a selected season
+*/
+
 // loads the DOM and preloads data
 window.onload = function() {
 
@@ -6,28 +28,28 @@ window.onload = function() {
 
 	// gueues data
 	d3.queue()
-		.defer(d3.json, relDataPath + 'laptimes.json')
-		.defer(d3.json, relDataPath + 'choro.json')
-		.defer(d3.json, relDataPath + 'winners.json')
-		.defer(d3.json, relDataPath + 'markers.json')
-		.defer(d3.json, relDataPath + 'rules.json')
+		.defer(d3.json, relDataPath + 'test2.json') // laptime data
+		.defer(d3.json, relDataPath + 'test0.json')  // choro data
+		.defer(d3.json, relDataPath + 'test3.json')	// winners data
+		.defer(d3.json, relDataPath + 'test1.json')	// markers data
+		.defer(d3.json, relDataPath + 'test4.json')  // rules data
 		.await(mainFunction);
 };
 
 /*
-* Main Function.
+* Main Function for error handling.
 */
 function mainFunction(error, laptimes, choro, winners, markers, rules) {
 
-	if (error) throw error;
-
-	// TODO add error handling
-
+	if (error) {
+		alert("An error has ocurred!\nPlease reload page.");
+		throw error;
+	};
 	drawMap(markers, choro, laptimes, winners, rules);
 };
 
 /*
-* Draw the markers for the map
+* Draws the map and calls further visualization functions upon completion.
 */
 function drawMap(data, choro, laptimes, winners, rules) {
 
@@ -49,10 +71,11 @@ function drawMap(data, choro, laptimes, winners, rules) {
 
 	// get the season on which the slider is initialised
 	var slider = d3.select('#myRange'),
-		INITSEASON = slider.attr('value');
+		INITSEASON = slider.attr('value'),
+		isos = Object.keys(choro["1950"]);
 
 	// build a mapData dict to initialise map
-	var mapData = mapDataBuilder(INITSEASON, color, choro);
+	var mapData = mapDataBuilder(INITSEASON, color, choro, isos);
 
 	// draws the world map in Mercator projection
 	var map = new Datamap({element: document.getElementById('container'),
@@ -161,26 +184,24 @@ function drawMap(data, choro, laptimes, winners, rules) {
 			showHideMarkers(markers, paths, moveAll, map);
 
 			// adds slide update functionality to the map
-			slideUpdateMap(map, choro, color, slider);
+			slideUpdateMap(map, choro, color, slider, isos);
 		}
 	});
 
 	// builds the legend of the map
-	buildLegend(map, width, height, margin, firstColor, lastColor, domain);
+	buildLegend(map, width, height, margin, firstColor, lastColor, domain, isos);
 };
 
 /*
 * Uses slider input to update the map colors.
 */
-function slideUpdateMap(map, choro, color, slider) {
-
-	// TODO: initiate tip?
+function slideUpdateMap(map, choro, color, slider, isos) {
 
 	slider.on('input', function() {
 
 		// build a new mapData dict and update map
 		var season = this.value,
-			mapData = mapDataBuilder(season, color, choro);
+			mapData = mapDataBuilder(season, color, choro, isos);
 		map.updateChoropleth(mapData);
 	});
 };
@@ -189,7 +210,7 @@ function slideUpdateMap(map, choro, color, slider) {
 * Builds the bar next to the map and adds functionality. Adds the space to the * right defined in the margin object to make space for the legend. pBar sets 
 * the height of the bar as a fraction of the height of the map.
 */
-function buildLegend(map, width, height, margin, firstColor, lastColor, domain, pBar = 2 / 3, barWidth = 10) {
+function buildLegend(map, width, height, margin, firstColor, lastColor, domain, isos, pBar = 2 / 3, barWidth = 10) {
 
 	// adds some margin to the right
 	map.svg.attr('width', width + margin.right);
@@ -235,7 +256,7 @@ function buildLegend(map, width, height, margin, firstColor, lastColor, domain, 
 	.offset(function() {
 		return [d3.event.offsetY - barStart + 10, 0]; 
 	})
-	.attr('class', 'd3-tip');
+	.attr('class', 'bar tip');
 
 	// call the tooltip
 	map.svg.call(tip);
@@ -254,7 +275,7 @@ function buildLegend(map, width, height, margin, firstColor, lastColor, domain, 
 
 			value = Math.round(getLegendValue(d3.event.offsetY));
 			tip.show();
-			borderChange(map, value);
+			borderChange(map, isos, value);
 		})
 		.on('mouseout', tip.hide);
 };
@@ -312,17 +333,16 @@ function showHideMarkers(markers, paths, moveAll, map) {
 };
 
 /*
-* TODO: fix bug with border width
+* Changes the width of borders of countries with a data value equal to the one 
+* selected with the legend bar. Changes the borderwidth back to the one set in
+* dataMaps for any country with another data value.
 */
-function borderChange(map, value) {
+function borderChange(map, isos, value, borderThickness = 3, defaultThickness = 0.25) {
 
 	// selects data stored in paths
 	var countryData = map.options.data;
 
-	// TODO: have list of all countries with 0 or more races ready
-	var countryIso = Object.keys(map.options.data);
-
-	countryIso.forEach(function(iso) {
+	isos.forEach(function(iso) {
 
 		var path = map.svg.select('.datamaps-subunit.' + iso);
 
@@ -331,14 +351,14 @@ function borderChange(map, value) {
 			// change the selected country
 			path.transition()
 				.duration(250)
-				.style('stroke-width', 3);
+				.style('stroke-width', borderThickness);
 		}
-		else if (path.style('stroke-width') != 0.25) {
+		else if (path.style('stroke-width') != map.options.geographyConfig.borderWidth) {
 
 			// change other selection back
 			path.transition()
 				.delay(250)
-				.style('stroke-width', 0.25);
+				.style('stroke-width', map.options.geographyConfig.borderWidth);
 		}
 	});
 };
@@ -347,15 +367,11 @@ function borderChange(map, value) {
 * Builds the data dict in Datamaps format. Used to initialise and update the 
 * map data and colors for a given dataset.
 */
-function mapDataBuilder(season, color, data) {
+function mapDataBuilder(season, color, data, isos) {
 
 	// select the dataset for the selected season via the slider
 	var isoData = data[season],
 		mapData = {};
-
-	// get all isos
-	// TODO: isoData always contains all isos which will host at least 1 race
-	var isos = Object.keys(isoData);
 
 	isos.forEach(function(iso) {
 		var value = isoData[iso];
@@ -437,11 +453,6 @@ function drawMarkers(data, map) {
 * Draws empty axes to be filled with data.
 */
 function buildLineChart(laptimes, winners, rules, markers) {
-
-	console.log('DO: buildLineChart', '\nData: ');
-	console.log(laptimes);
-
-	console.log('buildLineChart', rules);
 
 	// mock domain to be updated by data
 	var xDomain = [0, 0],
@@ -528,12 +539,13 @@ function buildLineChart(laptimes, winners, rules, markers) {
 		forceValue(circuitLaptimes);
 		updateLineGraph(circuitLaptimes);
 		updateTitle('circuit', d.circuit_name);
+		updateTitle('time', '');
 	});
 
+	/*
+	* Updates the line graph with new laptime data.
+	*/
 	function updateLineGraph(laptimes) {
-
-		console.log('DO: updateLineGraph', '\nData: ');
-		console.log(winners);
 
 		// updates domains
 		xDomain = d3.extent(laptimes, function(d) { return d.season; })
@@ -571,7 +583,6 @@ function buildLineChart(laptimes, winners, rules, markers) {
 				return d3.interpolatePath(previous, line(laptimes));
 			});
 
-		// TODO find out why selection requires g element
 		lineCircles = d3.select('#lineGraphG').selectAll('.lineCircle')
 			.data(laptimes);
 
@@ -595,8 +606,8 @@ function buildLineChart(laptimes, winners, rules, markers) {
 				.attr('r', 5)
 				.attr('class', 'lineCircle');
 
-		// the current dict in the data list selected by the mouse
-		var d0;
+		// stores the current dict in the data list selected by the mouse
+		var d0, season;
 
 		// selects focus elements
 		var overlay = d3.select("#lineGraph").selectAll('.overlay'),
@@ -609,7 +620,15 @@ function buildLineChart(laptimes, winners, rules, markers) {
 
 				var mouseX = d3.mouse(this)[0];		// get mouse x coordinate
 				d0 = getTrueData(laptimes, xScale, mouseX);
-				
+
+				// updates the title
+				season = timeParse(d0.season, '%Y');
+				var time = timeParse(d0.time, '%M:%S:%L'),
+					titleText = ' ' + season + ': ' + time;
+
+				updateTitle('time', titleText);
+
+				// updateTitle('time', text);
 				var x = xScale(d0.season), 			// true date x-coordinate
 					y = yScale(d0.time); 			// true date y-coordinate
 
@@ -634,7 +653,6 @@ function buildLineChart(laptimes, winners, rules, markers) {
 			})
 			.on('click', function() { 
 
-				var season = timeParse(d0.season, '%Y');
 				buildPieChart(winners, laptimes, rules, overlay, xScale, season);
 				changeRules(rules, season);
 				updateTitle('season0', season + ' F1 World Championship');
@@ -673,6 +691,9 @@ function dataIndex(data, mouse) {
 	return d3.bisector(function(d) { return d.season; }).left(data, mouse);
 };
 
+/*
+* Builds the pie chart with a dataset of winners.
+*/
 function buildPieChart(winners, laptimes, rules, overlay, xScale, season) {
 
 	// init on constructor data for user selected season
@@ -691,7 +712,6 @@ function buildPieChart(winners, laptimes, rules, overlay, xScale, season) {
 	var arc = d3.svg.arc()
 		.outerRadius(radius - 20);
 
-	// TODO sorting defaults to descending order, set data to descending and disable sort with pie().sort(null) default sort produces a visual bug where whitespace is created on change.
 	var pie = d3.layout.pie()
 		.value(function(d) { return d.value; })
 		.sort(null);
@@ -710,7 +730,7 @@ function buildPieChart(winners, laptimes, rules, overlay, xScale, season) {
 	var path = svg.selectAll("path")
 		.data(pie(data))
 		.enter().append("path")
-			.attr('class', function(d) { return (d.data.label).replace(/\s/g, ''); })
+			.attr('class', function(d) { return (d.data.label).replace(/\s/g, '_'); })
 			.attr("fill", function(d, i) { return color(i); })
 			.attr("d", arc(enterClockwise))
 			.each(function(d) {
@@ -729,6 +749,20 @@ function buildPieChart(winners, laptimes, rules, overlay, xScale, season) {
 		.duration(1000)
 		.attrTween("d", arcTween);
 
+	// sets the layout of the html text of the tooltip
+	var tip = d3.tip().html(function(d) {
+		console.log(d);
+	 	return "<span>Team: " + d.data.label + "</br>Wins: " + d.data.value + "</span>";
+	})
+	.attr('class', 'piechart tip');
+
+	// calls the tooltip
+	svg.call(tip);
+
+	// shows and hides tip for pie chart
+	path.on('mouseover', tip.show)
+	.on('mouseout', tip.hide);
+
 	// handles the update of the pie chart
 	overlay.on('click', function() {
 
@@ -743,19 +777,20 @@ function buildPieChart(winners, laptimes, rules, overlay, xScale, season) {
 		updateTitle('season0', season + ' F1 World Championship');
 	});
 
+	/*
+	* Updates the pie chart with new data.
+	*/
 	function updatePie(data) {
 
-		console.log('updatePie', '\nData: ');
-		console.log(data);
-
-		path = path.data(pie(data)); // update the data
+		// update the data
+		path = path.data(pie(data));
 
 		// redraws the arcs
 		path.transition().duration(750).attrTween("d", arcTween);
 	};
 
 	/*
-	* TODO Functions need arc function to work.
+	* Handles the interpolation between two arced path elements.
 	*/
 	function arcTween(a) {
 
@@ -764,7 +799,6 @@ function buildPieChart(winners, laptimes, rules, overlay, xScale, season) {
 		return function(t) { return arc(i(t)); };
 	};
 };
-
 
 /*
 * Changes text in tables according to selected season. If the selected season * has no data, then the left index is chosen. If an element is empty, then the
@@ -777,8 +811,6 @@ function changeRules(rules, season, bisector) {
 	var seasons = Object.keys(rules),
 		i = d3.bisector(function(d) { return d }).left(seasons, season) - 1;
 
-	// TODO: remove debug
-	console.log('Selected season: ' + season); // TODO remove
 	var data;
 
 	// checks if rules changed in this season
@@ -787,49 +819,30 @@ function changeRules(rules, season, bisector) {
 	}
 	else {
 		season = seasons[i];	// TODO: remove debug
-		console.log('No data, go back to season: ' + season);	// TODO remove debug
-
 		data = rules[seasons[i]];
 	};
 
 	// loops over keys in rule change dict
 	Object.keys(data).forEach(function(key) {
 
-		console.log('Current Key: ' + key);	// TODO remove
-		console.log('Current Season: ' + season); // TODO remove
-
 		// selects table row and text to be added to the row (if any)
 		var table = d3.select('.' + key),
 			text = data[key];
 
 		if (text) {
-
-			console.log('found data for ' + season + ': ' + text); // TODO remove
 			table.html(text);
-
-			if (key == 'innovations') {
-				d3.selectAll('.season').html(season);
-			};
 		}
 		else {
-			console.log('No data, go through seasons'); // TODO remove
 			// reset back to original index for new key: text element
 			var j = i,
 				text = rules[seasons[j]][key];
 
 			// while key string is empty for previous seasons reduces season
 			while (!text) {
-				console.log('No data for: ' + seasons[j]);	// TODO remove
 				j--;
 				text = rules[seasons[j]][key];
 			};
-			// TODO remove debug
-			console.log('Found data for: ' + seasons[j] + '. Data: ' + text);
 			table.html(text);
-
-			if (key == 'innovations') {
-				d3.selectAll('.season').html(seasons[j]);
-			};
 		};
 	});
 };

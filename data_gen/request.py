@@ -1,14 +1,31 @@
-# import library
+# Author: Rick van Bork
+# Std. nr.: 11990503
+#
+# Course: Programming Project
+#
+# Python file to fetch and format data from the Ergast API for building an F1
+# themed website. Results in creation
+# of five datasets:
+# 1. A choro dataset
+#			* With amount of races per country per season
+#			* Used to color the countries in a map
+# 2. A marker dataset
+#			* With circuit locations and names
+# 3. A laptime dataset
+#			* With laptime data per season for each circuit
+# 4. A winners dataset
+#			* With amount of team wins per F1 team per season
+# 5. A rules dataset
+#			* With rule changes per season
+
+# imports libraries
 import helpers as hlp
-import requests
-import sys
 import json
-from collections import Counter as count
 import os
 
-def main():
+def request():
 
-	# move back one directory and go to data folder
+	# moves back one directory and go to data folder
 	os.chdir("../data")
 
 	# sets containers for data handling
@@ -26,10 +43,10 @@ def main():
 	first_season = 1950
 	last_season = 2017
 
-	# fill pre choro_data set with empty values for every season
+	# fills pre choro_data set with empty values for every season
 	choro_data = hlp.pre_choro_data(isos, first_season, last_season)
 
-	# fill rules_data with rule changes on key seasons
+	# fills rules_data with rule changes on key seasons
 	rules_data = hlp.get_rules(first_season, last_season)
 
 	# sets the max amount of races (check Ergast for current ints)
@@ -39,7 +56,7 @@ def main():
 	URL = 'http://ergast.com/api/f1/results/1.json?limit=' + max_races
 	races = hlp.get_data(URL)['RaceTable']['Races']
 
-	# loop over races (with at least one race, port_imperial not included)
+	# loops over races (with at least one race, port_imperial not included)
 	for race in races:
 
 		circuit = race['Circuit']
@@ -48,47 +65,36 @@ def main():
 		# gets dataMaps iso value of an Ergast API country
 		iso = lookup_iso[circuit['Location']['country']]
 
-		# build choro data
+		# builds choro data
 		choro_data[race['season']][iso] += 1
 
 		# checks for unique circuits
 		if hlp.check(circuits, circuitId):
 
-			# make list of data needed for map markers
+			# makes list of data needed for map markers
 			hlp.get_marker_dict(marker_data, circuit, lookup_iso)
 
 			# starts new laptime list
 			laptime_data[circuitId] = []
 
 		hlp.get_race_dict(laptime_data, race, circuitId)
-
 		hlp.add_winner(winners_data, winners_list, race)
 
-	# formats the choro data into dataMaps acceptable format
+	# formats data into a d3 acceptable format
 	hlp.format_choro(choro_data, first_season, last_season)
-
-	# formats the winners data into d3 pie chart acceptable format
 	hlp.format_winners(winners_data, winners_list, first_season, last_season)
 
-	# TESTED!
-	with open('choro.json', 'w') as outfile:
-		json.dump(choro_data, outfile)
+	# lists to loop over with jsonifyer
+	datasets = [choro_data, marker_data, laptime_data, winners_data, rules_data]
+	datanames = ['test0', 'test1', 'test2', 'test3', 'test4']
 
-	# TESTED!
-	with open('markers.json', 'w') as outfile:
-		json.dump(marker_data, outfile)
+	# writes files
+	i = 0
+	for dataset in datasets:
 
-	# TESTED!
-	with open('laptimes.json', 'w') as outfile:
-		json.dump(laptime_data, outfile)
-
-	# TESTED!
-	with open('winners.json', 'w') as outfile:
-		json.dump(winners_data, outfile)
-
-	# TESTED!
-	with open('rules.json', 'w') as outfile:
-		json.dump(rules_data, outfile)
+		with open(datanames[i] + '.json', 'w') as outfile:
+			json.dump(datasets[i], outfile)
+		i += 1
 
 if __name__ == "__main__":
-	main()
+	request()

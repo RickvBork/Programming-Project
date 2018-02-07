@@ -1,9 +1,11 @@
 /*
-* Nooit puntcomma's
-*/
+Author: Rick van Bork
+Std. nr.: 11990503
 
-/*
-* Coupling bubbles to map combined with an update choropleth couses fillKey of * the bubble data to be overwritten.
+Course: Programming Project
+
+The following script sets the styling of the visualizations for an F1 oriented
+website.
 */
 
 .about {
@@ -86,7 +88,7 @@
   cursor: pointer;
 }
 
-.d3-tip {
+.tip {
   line-height: 1;
   width: 56px;
   margin-left: 38px;
@@ -100,8 +102,13 @@
   pointer-events: none;
 }
 
+.piechart.tip {
+    width: 130px;
+    font-size: 12px;
+}
+
 /*creates a small triangle pointing to the left*/
-.d3-tip::after {
+.bar.tip::after {
   content: " "; 
   display: block; 
   width: 0; 
@@ -131,11 +138,12 @@
 
 /*sets gutter between row*/
 #row0 {
-  padding-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 /*sets gutter between columns*/
 .vis.col-md-8 {
+  position: relative;
   margin-right: 20px;
 }
 
@@ -154,7 +162,6 @@
 
 /*formatting for map title*/
 .title {
-  width: 75%;
   margin: 0 auto;
   height: 50px;
   text-align: center;
@@ -162,7 +169,7 @@
   background-color: white;
 }
 
-.title p:nth-child(2) {
+.title p {
     font-size: 20px;
     font-style: italic;
 }
@@ -263,19 +270,32 @@ h5:after
 #graph-container {
   /*TODO: same as #map-slide-title-container*/
   height: 90%;
-  width: 100%;
+  width: 55%;
   background-color: red; /*TODO: REMOVE*/
+  margin-left: 20px;
 }
 
 .graph.title, .pie.title {
-  float: left;
-  height: 80px;
   text-align: left;
   padding-left: 20px;
 }
 
 .pie.title {
-  width: 100%;
+  height: 80px;
+}
+
+.graph.title {
+  height: 120px;
+}
+
+.graph.title p {
+  margin: 0;
+}
+
+.graph.title p:nth-child(3) {
+  font-size: 22px;
+  font-weight: bold;
+  font-style: normal;
 }
 
 /*info window for the reg changes*/
@@ -287,6 +307,15 @@ h5:after
   background-color: yellow;
 }
 
+#ruletable-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 40%;
+  background-color: yellow;
+}
+
 /*set opacity and color to uneven table rows*/
 tr:nth-child(even) {
     background: rgba(52, 58, 64, 0.2);
@@ -294,12 +323,12 @@ tr:nth-child(even) {
 
 /*general table layout*/
 table {
-    display: inline-block;
+    margin: auto;
+    width: 80%;
     font-family: arial, sans-serif;
     font-size: 12px;
     border-collapse: collapse;
-    width: 50%;
-    padding-bottom: 2%;
+    margin-bottom: 2%;
 }
 
 td, th {
@@ -308,12 +337,12 @@ td, th {
     padding: 5px;
 }
 
-.chassis {
-  float: right;
+tr th:nth-child(2) {
+  width: 55%;
 }
 
-.engine {
-  float: left;
+tr th:nth-child(1) {
+  width: 40%;
 }
 
 /*pie container div*/

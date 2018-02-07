@@ -1,3 +1,13 @@
+# Author: Rick van Bork
+# Std. nr.: 11990503
+#
+# Course: Programming Project
+#
+# Helpers file to fetch and format data from the Ergast API. Called from 
+# request.py
+
+
+# import libraries
 import requests
 import sys
 import csv
