@@ -217,7 +217,7 @@ function buildLineChart() {};
 ```
 Called from an anonymous function within the done* parameter of the dataMap in the **drawMap();** function to ensure the markers have been drawn.
 
-First it draws empty axes by processing empty time and date domains with empty tick formats. It also adds an empty line and focus elements. 
+It groups logic necessary for building and updating the line graph. First it draws empty axes by processing empty time and date domains with empty tick formats. It also adds an empty line and focus elements. 
 
 These include:
 1. The two focus lines
@@ -226,9 +226,9 @@ These include:
 2. The focus circle
 3. The focus overlay
 
-These are grouped in a <g> element which is hidden with a, display: none, style. The result are two empty axes, signalling to the user that these can be filled with data after an input. The empty elements are created to be updates easily later with the **updateLineGraph();** function.
+These are grouped in a <g> element which is hidden with a, display: none, style. The result are two empty axes, signalling to the user that these can be filled with data after an input. The empty elements are created to be easily updated with the **updateLineGraph();** function.
  
-The markers are used to update the (first empty) line graph with laptime data from a circuit after a click event. The marker has a circuitId, which keys laptimes in laptimes.json. Using the id, the correct laptimes are fetched and formatted using the **forceValue();** function. The formatted laptime data for the selected circuit is then used in the **updateLineGraph();** function. The title of the line graph is updated using the marker circuit_name, which is nicer to read than the id. This name is passed to the **updateTitle();** function.
+The markers are used to update the (first empty) line graph with laptime data from a circuit after a marker click event. The stored a circuitId, which keys laptimes in laptimes.json. Using the id, the correct laptimes are fetched and formatted using the **forceValue();** function. The formatted laptime data for the selected circuit is then used in the **updateLineGraph();** function. The title of the line graph is updated using the marker circuit_name, which is nicer to read than the id. This name is passed to the **updateTitle();** function.
 
 ```javascript
 function forceValue() {};
@@ -237,7 +237,7 @@ Called from the marker on click event in the **buildLineChart();**.
 
 It forces simple year strings, like "2017", into a JavaScript date objects e.g. *Thu Jan 01 1970 00:00:00 GMT+0100*. This object format is better suited for d3 axes, as the years can be displayed easily without displaying delimiter signs, e.g. 2,017. The same is true for the laptime info. The date object does have to be formatted back to a user readable format. The **timeParse();** function transforms the date object back into a simple string.
 
-The year is not important, so laptime info, which is stored in milliseconds in laptimes.json, is formatted directly as a date. This results in a 1970 date object, e.g. *Thu Jan 01 1970 **%M:%S:%L** GMT+0100*. The minutes, seconds and milliseconds can be fetched using the **d3.time.format("%M:%S:%L");** method, which converts the date object into a string, e.g. **"01:23:456"**. 
+For laptime info, which is stored in milliseconds in laptimes.json, The year is not important. So it is formatted directly as a new date object. This results in a 1970 date object, e.g. *Thu Jan 01 1970 **%M:%S:%L** GMT+0100*. The minutes, seconds and milliseconds can be fetched using the **d3.time.format("%M:%S:%L");** method, which converts the date object into a string, e.g. **"01:23:456"**. This also circumvents the need to do simple math for time conversion.
 
 ```javascript
 function updateLineGraph() {};
@@ -246,20 +246,57 @@ Called from the marker on click event in the **buildLineChart();**.
 
 Handles the line chart updates to reflect changes in circuit selection by the user via the map. Instead of empty domains, circuit specific information, which is passed via the marker on click event in the **buildLineChart();** function, is used to update the domains. The domains are then used to re-scale the axes.
 
-The line is updated via tween interpolation, using the previous line to smoothly transition to the next line. Stock d3 interpolation does not handle changes in data length and missing data smoothly, so the d3-interpolate-path library is used to handle the interpolation.
+The line is updated via *tween interpolation*, using the previous line to smoothly transition to the next line. Stock d3 interpolation does not handle changes in data length and missing data smoothly, so the *d3-interpolate-path library* is used to handle interpolation.
 
 The overlay is given new display styles every update, these hide and show focus elements on mouse in and out events. This is some extra work, but has some features that simplify the script. Mainly, this layout does not require a check if the overlay has been updaten before. On mouse move, the mouse x-coordinate is passed to the **getTrueData();** function, which returns the laptime data indexed at the season the user has selected with the mouse's x-position. Using this data, the x and y coordinates of each season and laptime of that season can be calculated. These are then used to draw the y- and x-focus lines. These focus-lines cross the line of the line graph exactly at the value of each laptime for each season.
 
 This allows an on click and update to be added to the graph overlay element, instead of the line graph circles. The user can now more easily select a season, as he/she does not have to click on a small circle for a selection, but can click anywhere on the line graph.
 
+The overlay on click event is now ready to:
+1. Build the pie chart
+  * **buildPieChart();**
+2. Change the rule tables next to the line graph
+  * **changeRules();**
+3. Update the title of the pie chart
+  * **updateTitle();**
+
 ```javascript
 function getTrueData() {};
 ```
-When the user wants to select a season from the line chart, this is the function that handles it. First it uses the invert method of the xScale function. This means translating a mouse coordinate to a date string, essentially the reverse process of getting drawing x-axis ticks. Then it bisects this date string into the dataset, returning the index where the date should be stored if inserted into a date sorted data set. Using the index, the trailing and leading datasets are used to find the one closest to the mouse location.
+Called from:
+1. graph overlay on mousemove in **updateLineGraph();**
+  * Provides positioning data for the focus lines
+2. graph overlay on click in **buildPieChart();**
+  * Used to fetch the season the user selects with his/her mouse position
+
+When the user wants to select a season specific laptimes information from the line chart, this is the function that handles it. First it uses the invert method of the xScale function. This means translating a mouse coordinate to a date string, essentially the reverse process of getting drawing x-axis ticks. Then it bisects this date string into the dataset, returning the index where the date should be stored if inserted into a date sorted data set. Using the index, the trailing and leading datasets are used to find the one closest to the mouse location.
+
+```javascript
+function buildPieChart() {};
+```
+Called from the overlay on click event in **updateLineGraph();**.
+
+It groups logic necessary for building and updating the pie chart. The pie chart is initiated by giving all slices a start and end-angle of 0 radians. This produces an empty pie chart. Then, using the **arctween();** function, it interpolates the value of the end-angles and start-angles on a slice per slice basis. The previous slice's end-angle, is the next slice's start angle. This is handled by the pie(data) function, which returns the start and end angles for each slice. An animation ensures a smooth transition between the empty pie chart, and the fully filled one.
+
+The overlay on click event, first initiated in the **updateLineGraph();** function, is also updated. It is now ready to:
+1. Update the pie chart
+  * **updatePie();**
+2. Change the rule tables next to the line graph
+  * **changeRules();**
+3. Update the title of the pie chart
+  * **updateTitle();**
+
+```javascript
+function updatePie() {};
+```
+
+
 
 ```javascript
 function updateTitle() {};
 ```
+Called from the line graph overlay and markers on click events.
+
 Updates title html elements after the user selects a circuit from the map, or a season from the line graph. The class is passed as a string, as is the text the title is to be updated with. The class is used to select the correct element(s) and the text is used to update the element's html.
 
 # Challenges & changes
