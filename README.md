@@ -1,4 +1,4 @@
-# Author information:
+# Author information
 
 * Name:		Rick van Bork
 * Std. nr.	11990503
@@ -8,13 +8,13 @@ https://rickvbork.github.io/Programming-Project/main/project.html
 
 # An F1 Application
 
-# Problem statement
+## Problem statement
 
 The FIA, the governing body of many automitive sports, have tried to decrease the speed of the cars, mainly from 1994 onwards. However, Formula 1 teams continue to find clever solutions to keep laptimes low to maintain a competitive edge. F1 is currently enjoying an injection of new fans after a Social Media campaign. New fans might benefit from visualizations of one of the most technical sports on earth. Currently, good visualizations are lacking on the F1 site, this creates a gap to be filled.
 
-# Screenshots
+## Screenshots
 
-## External sources:
+## External sources
 Please be advised that, when using and/or distributing this software, the following libraries and/or templates are not made by the copyright holder:
 
 This application uses the following libraries:
@@ -68,9 +68,12 @@ This application uses the following libraries:
     * Copyright ©: Blackrock Digital LLC
     * License: MIT
 
+
 Better Code Hub
 ==========================
 [![BCH compliance](https://bettercodehub.com/edge/badge/RickvBork/Programming-Project?branch=master)](https://bettercodehub.com/)
+==========================
+
 
 MIT/X11 License
 ==========================
