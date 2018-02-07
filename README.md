@@ -66,9 +66,9 @@ This application uses the following libraries:
 10. **Scrolling nav**
     * Link: https://github.com/BlackrockDigital/startbootstrap-scrolling-nav
     * Copyright ©: Blackrock Digital LLC
-    * License: MIT</br></br>
+    * License: MIT
 
-Better Code Hub
+</br></br>Better Code Hub
 ==========================
 [![BCH compliance](https://bettercodehub.com/edge/badge/RickvBork/Programming-Project?branch=master)](https://bettercodehub.com/)
 ==========================
