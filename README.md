@@ -3,10 +3,10 @@
 * Name:		Rick van Bork
 * Std. nr.	11990503
 
-link:
+link:\
 https://rickvbork.github.io/Programming-Project/main/project.html
 
-Link Minor Programmeren applicatie uitleg:
+Link Minor Programmeren applicatie uitleg:\
 https://youtu.be/nvHVzDhV2cM
 
 # An F1 Application
