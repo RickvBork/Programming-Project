@@ -302,3 +302,11 @@ TODO:
 * Find and fix bugs
   * Try to find a better pie chart solution
 * Final code cleanup
+
+## Day 19
+
+Done today:
+* Final code cleanup
+* Pie chart layout
+* Small site layout changes
+* TODOs removed
