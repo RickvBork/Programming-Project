@@ -25,6 +25,12 @@ Use the map to select a circuit. Laptime information will be displayed in a line
 ### The empty line graph, pie chart and rule table
 <img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/section1pre.jpg" width="800">
 
+### The line graph after the user selects a circuit (Albert Park)
+<img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/section1aft1.jpg" width="800">
+
+### The pie chart and rule table after the user selects a season (2017)
+<img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/section1aft2.jpg" width="800">
+
 ## Problem statement
 
 The FIA, the governing body of many automitive sports, have tried to decrease the speed of the cars, mainly from 1994 onwards. However, Formula 1 teams continue to find clever solutions to keep laptimes low to maintain a competitive edge. F1 is currently enjoying an injection of new fans after a Social Media campaign. New fans might benefit from visualizations of one of the most technical sports on earth. Currently, good visualizations are lacking on the F1 site, this creates a gap to be filled.
