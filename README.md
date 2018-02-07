@@ -6,6 +6,9 @@
 link:
 https://rickvbork.github.io/Programming-Project/main/project.html
 
+Link Minor Programmeren applicatie uitleg:
+https://youtu.be/nvHVzDhV2cM
+
 # An F1 Application
 
 ## Problem statement
