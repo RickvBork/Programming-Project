@@ -12,6 +12,13 @@ https://youtu.be/nvHVzDhV2cM
 # An F1 Application
 
 ## The circuit map
+Use the map to select a circuit. Laptime information will be displayed in a linechart below the map.
+
+The map initiated on page load
+<img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/section0pre.jpg" width="800">
+
+The map after user inputs 2017 in the slider and selects 'show on country click' in the options menu
+<img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/section0aft.jpg" width="800">
 
 ## The Line chart
 
