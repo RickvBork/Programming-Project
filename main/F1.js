@@ -20,6 +20,8 @@ The three elements respectively show:
 3. Team wins of a selected season
 */
 
+"use strict";
+
 // loads the DOM and preloads data
 window.onload = function() {
 
@@ -280,6 +282,9 @@ function buildLegend(map, width, height, margin, firstColor, lastColor, domain, 
 		.on('mouseout', tip.hide);
 };
 
+/*
+* Adds marker show hide functionality.
+*/
 function showHideMarkers(markers, paths, moveAll, map) {
 
 	// show circle functionality
@@ -288,7 +293,7 @@ function showHideMarkers(markers, paths, moveAll, map) {
 
 	// groups circle transitions
 	var duration = 1000,
-		t  = markers.circles.transition().duration(duration);
+		t  = markers.circles.transition().duration(duration),
 		d = markers.circles.transition().delay(duration);
 
 	// show all circuit circles with radio button
@@ -503,34 +508,8 @@ function buildLineChart(laptimes, winners, rules, markers) {
 	g.append('path')
 		.attr('class', 'line');
 
-	// creates focus container
-	var mousePoint = g.append('g')
-		.attr('class', 'focus')
-		.style('display', 'none');
-
-	// appends the X-axis crosshair line
-	mousePoint.append('line')
-		.attr('id', 'focusLineX')
-		.attr('class', 'focusLine')
-		.style('stroke-dasharray', ('8, 2'));
-	
-	// appends the Y-axis crosshair line
-	mousePoint.append('line')
-		.attr('id', 'focusLineY')
-		.attr('class', 'focusLine')
-		.style('stroke-dasharray', ('8, 2'));
-	
-	// appends the tracking circle
-	mousePoint.append('circle')
-		.attr('id', 'focusCircle')
-		.attr('r', markers.radius)
-		.attr('class', 'focusCircle');
-
-	// appends the overlay class
-	g.append('rect')
-		.attr('class', 'overlay')
-		.attr('width', width)
-		.attr('height', height);
+	// creates a focus element
+	createFocus(g, width, height, markers.radius);
 
 	// handles the update
 	markers.circles.on('click', function(d) {
@@ -583,10 +562,8 @@ function buildLineChart(laptimes, winners, rules, markers) {
 				return d3.interpolatePath(previous, line(laptimes));
 			});
 
-		lineCircles = d3.select('#lineGraphG').selectAll('.lineCircle')
+		var lineCircles = d3.select('#lineGraphG').selectAll('.lineCircle')
 			.data(laptimes);
-
-		var t = lineCircles.transition().duration(250);
 
 		lineCircles.exit().transition()			// remove excess circles
 			.duration(250)
@@ -659,6 +636,38 @@ function buildLineChart(laptimes, winners, rules, markers) {
 			});
 	};
 
+};
+
+function createFocus(g, width, height, radius) {
+
+	// creates focus container
+	var mousePoint = g.append('g')
+		.attr('class', 'focus')
+		.style('display', 'none');
+
+	// appends the X-axis crosshair line
+	mousePoint.append('line')
+		.attr('id', 'focusLineX')
+		.attr('class', 'focusLine')
+		.style('stroke-dasharray', ('8, 2'));
+	
+	// appends the Y-axis crosshair line
+	mousePoint.append('line')
+		.attr('id', 'focusLineY')
+		.attr('class', 'focusLine')
+		.style('stroke-dasharray', ('8, 2'));
+	
+	// appends the tracking circle
+	mousePoint.append('circle')
+		.attr('id', 'focusCircle')
+		.attr('r', radius)
+		.attr('class', 'focusCircle');
+
+	// appends the overlay class
+	g.append('rect')
+		.attr('class', 'overlay')
+		.attr('width', width)
+		.attr('height', height);
 };
 
 /*
@@ -767,9 +776,9 @@ function buildPieChart(winners, laptimes, rules, overlay, xScale, season) {
 	overlay.on('click', function() {
 
 		// get the season from the line chart click
-		var mouseX = d3.mouse(this)[0];
-		d0 = getTrueData(laptimes, xScale, mouseX);
-		var season = timeParse(d0.season, '%Y');
+		var mouseX = d3.mouse(this)[0],
+			d0 = getTrueData(laptimes, xScale, mouseX),
+			season = timeParse(d0.season, '%Y'),
 			data = winners[season]['constructor'];
 
 		updatePie(data);
