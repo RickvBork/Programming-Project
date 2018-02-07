@@ -68,6 +68,8 @@ This application uses the following libraries:
     * Copyright ©: Blackrock Digital LLC
     * License: MIT
 
+Better Code Hub
+==========================
 [![BCH compliance](https://bettercodehub.com/edge/badge/RickvBork/Programming-Project?branch=master)](https://bettercodehub.com/)
 
 MIT/X11 License
