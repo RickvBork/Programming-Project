@@ -14,17 +14,16 @@ https://youtu.be/nvHVzDhV2cM
 ## The circuit map
 Use the map to select a circuit. Laptime information will be displayed in a linechart below the map.
 
-The map initiated on page load
+### The map initiated on page load
 <img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/section0pre.jpg" width="800">
 
-The map after user inputs 2017 in the slider and selects 'show on country click' in the options menu
+### The map after user inputs 2017 in the slider and selects 'show on country click' in the options menu
 <img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/section0aft.jpg" width="800">
 
-## The Line chart
+## Line graph pie chart and table
 
-## The rules section
-
-## The pie chart
+### The empty line graph, pie chart and rule table
+<img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/section1pre.jpg" width="800">
 
 ## Problem statement
 
