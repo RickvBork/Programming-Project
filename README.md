@@ -6,10 +6,18 @@
 link:\
 https://rickvbork.github.io/Programming-Project/main/project.html
 
-Link Minor Programmeren applicatie uitleg:\
+Link Minor Programmeren application details (dutch):\
 https://youtu.be/nvHVzDhV2cM
 
 # An F1 Application
+
+## The circuit map
+
+## The Line chart
+
+## The rules section
+
+## The pie chart
 
 ## Problem statement
 
