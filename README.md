@@ -71,7 +71,7 @@ This application uses the following libraries:
 Better Code Hub
 ==========================
 [![BCH compliance](https://bettercodehub.com/edge/badge/RickvBork/Programming-Project?branch=master)](https://bettercodehub.com/)
-==========================
+==========================</br></br>
 
 MIT/X11 License
 ==========================
