@@ -1,1 +1,9 @@
+component_depth: 1
+languages:
+- python
+- javascript
 
+exclude:
+- /data/.*
+- /doc/.*
+- /libs/.*
