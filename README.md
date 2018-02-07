@@ -12,7 +12,7 @@ https://youtu.be/nvHVzDhV2cM
 # An F1 Application
 
 ## The circuit map
-Use the map to select a circuit. Laptime information will be displayed in a linechart below the map.
+Use the map to select a circuit and to show the amount of F1 races a country has hosted. Laptime information will be displayed in a linechart below the map.
 
 ### The map initiated on page load
 <img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/section0pre.jpg" width="800">
@@ -21,6 +21,7 @@ Use the map to select a circuit. Laptime information will be displayed in a line
 <img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/section0aft.jpg" width="800">
 
 ## Line graph pie chart and table
+Use the line graph to select a season with which the pie chart will be updated to and to view average laptimes per season. Use the pie chart to view the amount of wins per team for a selected season. Use the rule table to view the most recent rule set.
 
 ### The empty line graph, pie chart and rule table
 <img src="https://github.com/RickvBork/Programming-Project/blob/master/doc/section1pre.jpg" width="800">
