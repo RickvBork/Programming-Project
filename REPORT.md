@@ -289,8 +289,9 @@ The overlay on click event, first initiated in the **updateLineGraph();** functi
 ```javascript
 function updatePie() {};
 ```
+Called from the updated overlay on click event in **buildPieChart();**
 
-
+This function updates the slices to correctly display updated values per winner. A difficulty was getting the right slices entered, exited and updated. The pie chart would not couple slice labels to specific slices. Instead, the order of the slices and data in the dataset would determine the way the update proceded. This meant slices representing a team that won in a previously selected season, would not correctly exit if they didn't win in the newly selected season. The fix was to include all possible winners in alphabetical order and to set values to 0 if teams didn't win in the selected season. Read more about it in **Challenges & changes**
 
 ```javascript
 function updateTitle() {};
@@ -302,7 +303,48 @@ Updates title html elements after the user selects a circuit from the map, or a 
 # Challenges & changes
 
 ## Python data gen
-The focus was not on efficiency, as the data only needs updating once a year.
+A challenge was to find a way to update the data in such a way that new data can easily be added. There were two considerations:
+
+**1. Use one GET request in one python file**
+  * Use one python file to:
+    * Fetch and select all data
+    * Format all data
+    * Jsonify all data
+
+This means doing more work with formatting, as the one GET request does not have all data in order. E.g. All circuits are in order and known, but all the amount of races per country are only known after looping over the entire request. But the time spent waiting for data is reduced.
+
+**2. Use multiple GET requests in multiple python files**
+  * Use multiple python files to:
+    * Fetch and select all data
+    * Format all data
+    * Jsonify all data
+
+This means doing more GET requests, as one GET request does not have all data. E.g. a GET request for the circuits included in the calendar for a specific season. Tt is more likely that the data is already in order, which means spending less effort and time formatiing the data. It also seperates data generating scipts into seperate files, each with a more distinct purpose.
+
+The focus was not on efficiency, as the data only needs updating once a year. But using method 2. the amount of python files and requests meant fetching data became a chore quickly. So method 1 was chosen as a replacement. The current request.py and helpers.py files are not easy to alter, but for the purpose of the assignment, they do the job.
+
+The only positive of using a single GET request is:
+1. Less time spent waiting on data
+2. Less cluttering files
+3. Less GET requests, some of which almost fetched the same data
+
+This is the only change I didn't like the outcome of.
+
+## Table instead of tooltip
+The first draft of the application used a simple tooltip to display rule changes. This tooltip was to be implemented at a mouse event on the focus circle of the line graph. However, the way rule changes were implemented have change. The main reasons were to:
+
+**1. Reduce clutter in the line graph**
+The line graph already consists of:
+    * The laptimes line
+    * Line circles
+    * Focus elements
+
+A tooltip would overwhelm the user.
+
+**2. Enable growth in information**
+A tooltip will quickly be too small to correctly display all relevant information. The amount of rules information is likely to grow as I keep working on the site as a hobby.
+
+However, this created a few new challenges.
 
 ## Table update and data structure
 A challenge was finding a logical way to update a table to the most recent ruleset. The most difficult part was finding a simple way to do 1 of two things:
