@@ -38,7 +38,7 @@ This application uses the following libraries:
     * License: BSD 3-Clause "New" or "Revised" License
     * Copyright ©: Peter Beshai
 
-5 **dataMaps**
+5. **dataMaps**
     * Link: https://github.com/markmarkoh/datamaps
     * License: MIT
     * Copyright ©: Mark DiMarco
